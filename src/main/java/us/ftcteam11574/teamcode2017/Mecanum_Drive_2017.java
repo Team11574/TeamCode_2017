@@ -40,10 +40,14 @@ public class Mecanum_Drive_2017 extends OpMode {
     public void loop() {
         double motorPower = 1.0;
         double slowMotorPower = 0.30;
-        double x = -gamepad1.left_stick_x;
-        double y = -gamepad1.left_stick_y;
+        double xs = -gamepad1.left_stick_x;
+        double ys = -gamepad1.left_stick_y;
         double lt = -gamepad1.left_trigger;
         double rt = -gamepad1.right_trigger;
+        boolean dpd = gamepad1.dpad_down;
+        boolean dpu = gamepad1.dpad_up;
+        boolean dpl = gamepad1.dpad_left;
+        boolean dpr = gamepad1.dpad_right;
 
         if (gamepad1.dpad_left) {
             // Strafe left.
