@@ -89,10 +89,10 @@ public class Mecanum_Drive_2017 extends OpMode {
             // Allow use of the analog left/right sticks to control the robot in differential
             // steering (tank driving) mode. Allow use of the left and right trigger buttons
             // to rotate the robot.
-            mFL.setPower((y - x + lt - rt) * slowMotorPower);
-            mBL.setPower((y + x + lt - rt) * slowMotorPower);
-            mFR.setPower((y + x - lt + rt) * slowMotorPower);
-            mBR.setPower((y - x - lt + rt) * slowMotorPower);
+            mFL.setPower((ys - xs + lt - rt) * slowMotorPower);
+            mBL.setPower((ys + xs + lt - rt) * slowMotorPower);
+            mFR.setPower((ys + xs - lt + rt) * slowMotorPower);
+            mBR.setPower((ys - xs - lt + rt) * slowMotorPower);
 
         }
 
