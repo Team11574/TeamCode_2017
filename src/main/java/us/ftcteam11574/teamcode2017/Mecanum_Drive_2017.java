@@ -3,6 +3,7 @@ package us.ftcteam11574.teamcode2017;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Mecanum_Drive_2017", group = "Mecanum")
@@ -25,7 +26,7 @@ public class Mecanum_Drive_2017 extends OpMode {
         mBL.setDirection(DcMotor.Direction.FORWARD);
         mFR.setDirection(DcMotor.Direction.REVERSE);
         mBR.setDirection(DcMotor.Direction.REVERSE);
-        mLS.setDirection(DcMotor.Direction.FORWARD);
+        mLS.setDirection(DcMotor.Direction.REVERSE);
 
         mFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         mBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -44,10 +45,10 @@ public class Mecanum_Drive_2017 extends OpMode {
     public void loop() {
         double motorPower = 1.0;
         double slowMotorPower = 0.30;
-        double DriveX = -gamepad1.right_stick_x;
-        double DriveY = -gamepad1.right_stick_y;
-        double SpinLeft = -gamepad1.left_trigger;
-        double SpinRight = -gamepad1.right_trigger;
+        double DriveX = gamepad1.right_stick_x;
+        double DriveY = gamepad1.right_stick_y;
+        double SpinLeft = gamepad1.left_trigger;
+        double SpinRight = gamepad1.right_trigger;
         double LiftSlide = gamepad1.left_stick_y;
         boolean OpenClaw = gamepad1.x;
         boolean CloseClaw = gamepad1.y;
@@ -68,11 +69,6 @@ public class Mecanum_Drive_2017 extends OpMode {
             mBR.setPower(DriveY - DriveX - SpinLeft + SpinRight);
             mLS.setPower(LiftSlide);
             mLS.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        float l = (gamepad1.left_stick_x);
-        float r = (gamepad1.right_stick_x * -1);
-        SR.setPosition(l);
-        SL.setPosition(r);
 
     }
 }
