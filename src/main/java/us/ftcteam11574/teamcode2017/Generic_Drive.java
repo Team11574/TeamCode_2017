@@ -316,7 +316,7 @@ public enum AllianceColor {
         if (Left_Right.getState())
             return LeftRight.Left;
         else
-            return LeftRight.Left;
+            return LeftRight.Right;
     }
 
     // Initialize the robot and all its sensors.

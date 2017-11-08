@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="Omni_Four_Wheel", group="Omni_Wheels")
-
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Omni_Four_Wheel extends LinearOpMode {
     DcMotor left_rear_drive_motor, right_rear_drive_motor;
