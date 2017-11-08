@@ -60,9 +60,7 @@ public class Mecanum_Drive_2017 extends OpMode {
             SL.setPosition(CLAW_CLOSED_POSITION);
             SR.setPosition(CLAW_CLOSED_POSITION);
         }
-            // Allow use of the analog left/right sticks to control the robot in differential
-            // steering (tank driving) mode. Allow use of the left and right trigger buttons
-            // to rotate the robot.
+
             mFL.setPower(DriveY - DriveX + SpinLeft - SpinRight);
             mBL.setPower(DriveY + DriveX + SpinLeft - SpinRight);
             mFR.setPower(DriveY + DriveX - SpinLeft + SpinRight);
