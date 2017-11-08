@@ -8,7 +8,8 @@ public class AutonomousPark extends Generic_Drive {
     @Override
     public void robotRun() {
         // Drive to park in front of Cryptobox.
-        drive_distance(DRIVE_FORWARD, 34.0, 0.8);
+        drive_distance(DRIVE_BACKWARD, 15.0, 0.8);
         stop_all_motors();
     }
+
 }
