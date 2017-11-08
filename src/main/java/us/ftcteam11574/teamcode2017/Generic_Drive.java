@@ -53,6 +53,12 @@ public enum AllianceColor {
     Red,
     Blue,
 }
+    // Each of the sides we need to know about
+    public enum LeftRight {
+        Unknown,
+        Left,
+        Right,
+ }
     // Each of the motors on the robot.
     final private static int MOTOR_COUNT = 4;
     final private static int mFL = 0;
@@ -97,6 +103,9 @@ public enum AllianceColor {
 
   // The chassis-mounted red/blue alliance switch for autonomous mode.
     DigitalChannel alliance_switch;
+
+    //The LeftRight switch
+    DigitalChannel Left_Right;
 
     // The gyro sensor.
     GyroSensor gyro;
@@ -303,6 +312,13 @@ public enum AllianceColor {
             return Generic_Drive.AllianceColor.Blue;
     }
 
+    public Generic_Drive.LeftRight check_LeftRight() {
+        if (Left_Right.getState())
+            return LeftRight.Left;
+        else
+            return LeftRight.Left;
+    }
+
     // Initialize the robot and all its sensors.
     public void robotInit() {
         info("Initialization starting...");
@@ -326,6 +342,11 @@ public enum AllianceColor {
         alliance_switch = hardwareMap.digitalChannel.get("alliance_switch");
         alliance_switch.setMode(DigitalChannelController.Mode.INPUT);
 
+        // Initialize the left_right switch.
+        info("* Initializing Left_Right switch...");
+        Left_Right = hardwareMap.digitalChannel.get("Left_Right_Switch");
+        Left_Right.setMode(DigitalChannelController.Mode.INPUT);
+
         // Initialize the gyro.
         info("* Initializing gyro sensor...");
         gyro = hardwareMap.gyroSensor.get("gyro");
@@ -340,6 +361,7 @@ public enum AllianceColor {
             // Send some basic sensor data telemetry for confirmation and testing.
             telemetry.addData("1. alliance", check_alliance());
             telemetry.addData("2. gyro", gyro.getHeading());
+            telemetry.addData("3. LeftRight", check_LeftRight());
             telemetry.update();
         }
     }
