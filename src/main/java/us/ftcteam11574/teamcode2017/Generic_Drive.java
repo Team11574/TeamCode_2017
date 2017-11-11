@@ -29,6 +29,7 @@ public class StopImmediatelyException extends RuntimeException {
     public StopImmediatelyException() { super(); }
 }
 
+
     // Number of encoder counts per wheel revolution.
     final private static int ENCODER_CPR = 1120;
 
