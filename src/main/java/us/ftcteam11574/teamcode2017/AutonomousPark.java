@@ -33,9 +33,9 @@ public class AutonomousPark extends Generic_Drive {
             else
                 strafe_direction = STRAFE_RIGHT;
             // Drive to park in front of Cryptobox.
-            drive_distance(DRIVE_FORWARD, 36.0, 0.5);
+            drive_distance(DRIVE_FORWARD, 32.0, 0.5);
             stop_all_motors();
-            drive_distance(strafe_direction, 12.0, 0.5);
+            drive_distance(strafe_direction, 11.0, 0.5);
             stop_all_motors();
         } else if (sp == StartingPosition.North) {
             int strafe_direction;
@@ -46,9 +46,9 @@ public class AutonomousPark extends Generic_Drive {
             // Drive to park in front of Cryptobox.
             drive_distance(DRIVE_FORWARD, 24.0, 0.5);
             stop_all_motors();
-            drive_distance(strafe_direction, 12.0, 0.5);
+            drive_distance(strafe_direction, 6.0, 0.5);
             stop_all_motors();
-            drive_distance(DRIVE_FORWARD, 12.0, 0.5);
+            drive_distance(DRIVE_FORWARD, 3.0, 0.5);
             stop_all_motors();
 
         }
