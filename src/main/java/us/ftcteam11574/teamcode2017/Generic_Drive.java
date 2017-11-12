@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DigitalChannelController;
-import com.qualcomm.robotcore.hardware.GyroSensor;
+//import com.qualcomm.robotcore.hardware.GyroSensor;
 
 
 import java.util.Locale;
@@ -72,10 +72,10 @@ public enum AllianceColor {
     // The direction that each motor on the robot is oriented. The right-side motors are mounted
     // backwards relative to the left side ones.
     final private static DcMotorSimple.Direction MOTOR_DIRECTIONS[] = {
-            DcMotor.Direction.FORWARD, // mFL
-            DcMotor.Direction.REVERSE, // mFR
-            DcMotor.Direction.FORWARD, // mBL
-            DcMotor.Direction.REVERSE, // mBR
+            DcMotor.Direction.REVERSE, // mFL
+            DcMotor.Direction.FORWARD, // mFR
+            DcMotor.Direction.REVERSE, // mBL
+            DcMotor.Direction.FORWARD, // mBR
     };
     // Each driving direction supported by driving functions.
 
@@ -109,7 +109,7 @@ public enum AllianceColor {
     DigitalChannel Left_Right;
 
     // The gyro sensor.
-    GyroSensor gyro;
+  //  GyroSensor gyro;
 
     // Convert a distance, in inches, into an encoder count, including a wheel slippage correction
     // factor.
@@ -308,16 +308,16 @@ public enum AllianceColor {
 
     public Generic_Drive.AllianceColor check_alliance() {
         if (alliance_switch.getState())
-            return Generic_Drive.AllianceColor.Red;
+            return AllianceColor.Blue;
         else
-            return Generic_Drive.AllianceColor.Blue;
+            return AllianceColor.Red;
     }
 
     public Generic_Drive.LeftRight check_LeftRight() {
         if (Left_Right.getState())
-            return LeftRight.Left;
-        else
             return LeftRight.Right;
+        else
+            return LeftRight.Left;
     }
 
     // Initialize the robot and all its sensors.
@@ -345,23 +345,25 @@ public enum AllianceColor {
 
         // Initialize the left_right switch.
         info("* Initializing Left_Right switch...");
-        Left_Right = hardwareMap.digitalChannel.get("Left_Right_Switch");
+        Left_Right = hardwareMap.digitalChannel.get("left_right_switch");
         Left_Right.setMode(DigitalChannelController.Mode.INPUT);
 
         // Initialize the gyro.
-        info("* Initializing gyro sensor...");
+       /* info("* Initializing gyro sensor...");
         gyro = hardwareMap.gyroSensor.get("gyro");
         telemetry.addData(">", "Calibrating gyro...");
         gyro.calibrate();
         while(gyro.isCalibrating() && !isStopRequested()){}
         info("Initialization complete.");
+    */
     }
+
 
     public void robotWaitForStart() {
         while(!isStarted() && !isStopRequested()) {
             // Send some basic sensor data telemetry for confirmation and testing.
             telemetry.addData("1. alliance", check_alliance());
-            telemetry.addData("2. gyro", gyro.getHeading());
+            //telemetry.addData("2. gyro", gyro.getHeading());
             telemetry.addData("3. LeftRight", check_LeftRight());
             telemetry.update();
         }
