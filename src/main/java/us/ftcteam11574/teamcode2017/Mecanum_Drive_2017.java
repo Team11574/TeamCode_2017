@@ -3,10 +3,10 @@ package us.ftcteam11574.teamcode2017;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+//import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Mecanum_Drive_2017", group = "Mecanum")
+@TeleOp(name = "Mecanum Teleop", group = "Mecanum")
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Mecanum_Drive_2017 extends OpMode {
     public static final double CLAW_CLOSED_POSITION = 1.0;
@@ -21,22 +21,21 @@ public class Mecanum_Drive_2017 extends OpMode {
         mFR = hardwareMap.dcMotor.get("mFR");
         mBR = hardwareMap.dcMotor.get("mBR");
         mLS = hardwareMap.dcMotor.get("mLS");
+        SR = hardwareMap.servo.get("SR");
+        SL = hardwareMap.servo.get("SL");
 
         mFL.setDirection(DcMotor.Direction.FORWARD);
         mBL.setDirection(DcMotor.Direction.FORWARD);
         mFR.setDirection(DcMotor.Direction.REVERSE);
         mBR.setDirection(DcMotor.Direction.REVERSE);
         mLS.setDirection(DcMotor.Direction.REVERSE);
+        SL.setDirection(Servo.Direction.REVERSE);
 
         mFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         mBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         mFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         mBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         mLS.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        SR = hardwareMap.servo.get("SR");
-        SL = hardwareMap.servo.get("SL");
-        SL.setDirection(Servo.Direction.REVERSE);
 
         gamepad1.setJoystickDeadzone(0.2f);
     }

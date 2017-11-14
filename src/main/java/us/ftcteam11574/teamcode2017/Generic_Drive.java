@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DigitalChannelController;
+import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.GyroSensor;
 
 
@@ -48,8 +49,15 @@ public class StopImmediatelyException extends RuntimeException {
     // The factor of slippage of wheels when strafing. Measured to be about 8%.
     final private static double STRAFE_SLIPPAGE_FACTOR = 1.08;
 
-// Each of the colors we need to know about, only red and blue.
-public enum AllianceColor {
+    // Set Glyph claw closed position
+    public static final double CLAW_CLOSED_POSITION = 1.0;
+
+    // Set Glyph claw open position
+    public static final double CLAW_OPEN_POSITION = 0.0;
+
+
+    // Each of the colors we need to know about, only red and blue.
+    public enum AllianceColor {
     Unknown,
     Red,
     Blue,
@@ -69,6 +77,8 @@ public enum AllianceColor {
     final private static String[] MOTOR_NAMES = {
             "mFL", "mFR", "mBL", "mBR"
     };
+
+
     // The direction that each motor on the robot is oriented. The right-side motors are mounted
     // backwards relative to the left side ones.
     final private static DcMotorSimple.Direction MOTOR_DIRECTIONS[] = {
