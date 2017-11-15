@@ -1,4 +1,4 @@
-package us.ftcteam11574.teamcode2017;
+/*package us.ftcteam11574.teamcode2017;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,7 +11,7 @@ public class AutonomousGlyph extends Generic_Drive {
     public static final double CLAW_OPEN_POSITION = 0.0;
     DcMotor mFL, mBL, mFR, mBR, mLS;
     Servo SR, SL;
-    
+
     private enum StartingPosition{
         Unknown,
         North,
@@ -74,3 +74,4 @@ public class AutonomousGlyph extends Generic_Drive {
     }
 
 }
+*/
