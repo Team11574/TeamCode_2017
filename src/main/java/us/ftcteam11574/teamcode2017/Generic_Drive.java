@@ -312,7 +312,7 @@ public class StopImmediatelyException extends RuntimeException {
     // Drive in a given direction at a given speed until reaching the given distance.
     public void drive_distance(int direction, double distance, double speed) {
         drive_distance_start(direction, distance, speed);
-        wait_for_all_encoders_satisfied();
+        wait_for_one_encoder_satisfied();
     }
 
 
