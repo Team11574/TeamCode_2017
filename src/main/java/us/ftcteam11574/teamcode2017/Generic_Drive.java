@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 import java.util.Locale;
+import java.util.ServiceLoader;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class Generic_Drive extends LinearOpMode {
@@ -111,6 +112,15 @@ public class StopImmediatelyException extends RuntimeException {
     };
     // An array of DcMotors to represent all of the motors.
     DcMotor motor[];
+
+    //
+    DcMotor motorGrabberLift;
+
+    // A variable for the left servo
+    Servo servoGrabberLeft;
+
+    // a variable for the right servo
+    Servo servoGrabberRight;
 
   // The chassis-mounted red/blue alliance switch for autonomous mode.
     DigitalChannel alliance_switch;
@@ -343,6 +353,15 @@ public class StopImmediatelyException extends RuntimeException {
             motor[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motor[i].setPower(0.0);
         }
+        // Initialize motorGrabberLift
+        motorGrabberLift = hardwareMap.dcMotor.get("mLS");
+        motorGrabberLift.setDirection(DcMotor.Direction.REVERSE);
+
+        // Initialize grabber servos
+        servoGrabberLeft = hardwareMap.servo.get("SL");
+        servoGrabberRight = hardwareMap.servo.get("SR");
+        servoGrabberLeft.setDirection(Servo.Direction.REVERSE);
+
 
         // Make sure everything starts out stopped.
         stop_all_motors();
