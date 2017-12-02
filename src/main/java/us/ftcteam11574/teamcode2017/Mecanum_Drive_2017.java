@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 //import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Mecanum Teleop", group = "Mecanum")
@@ -11,8 +12,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Mecanum_Drive_2017 extends OpMode {
     public static final double CLAW_CLOSED_POSITION = 1.0;
     public static final double CLAW_OPEN_POSITION = 0.0;
+    public static final double CLAW_OPEN_PARTIALLY = 0.3;
     DcMotor mFL, mBL, mFR, mBR, mLS;
     Servo SR, SL;
+
 
     @Override
     public void init() {
@@ -24,10 +27,10 @@ public class Mecanum_Drive_2017 extends OpMode {
         SR = hardwareMap.servo.get("SR");
         SL = hardwareMap.servo.get("SL");
 
-        mFL.setDirection(DcMotor.Direction.FORWARD);
-        mBL.setDirection(DcMotor.Direction.FORWARD);
-        mFR.setDirection(DcMotor.Direction.REVERSE);
-        mBR.setDirection(DcMotor.Direction.REVERSE);
+        mFL.setDirection(DcMotor.Direction.REVERSE);
+        mBL.setDirection(DcMotor.Direction.REVERSE);
+        mFR.setDirection(DcMotor.Direction.FORWARD);
+        mBR.setDirection(DcMotor.Direction.FORWARD);
         mLS.setDirection(DcMotor.Direction.REVERSE);
         SL.setDirection(Servo.Direction.REVERSE);
 
@@ -51,6 +54,7 @@ public class Mecanum_Drive_2017 extends OpMode {
         double LiftSlide = gamepad1.left_stick_y;
         boolean OpenClaw = gamepad1.x;
         boolean CloseClaw = gamepad1.y;
+        boolean OpenClawPartially = gamepad1.b;
 
         if (OpenClaw) {
             SL.setPosition(CLAW_OPEN_POSITION);
@@ -58,6 +62,10 @@ public class Mecanum_Drive_2017 extends OpMode {
         }else if (CloseClaw){
             SL.setPosition(CLAW_CLOSED_POSITION);
             SR.setPosition(CLAW_CLOSED_POSITION);
+       /* }else (OpenClawPartially) {
+                SL.setPosition(CLAW_OPEN_PARTIALLY);
+
+            }*/
         }
 
             mFL.setPower(DriveY - DriveX + SpinLeft - SpinRight);
