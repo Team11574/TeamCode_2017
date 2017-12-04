@@ -1,5 +1,6 @@
 package us.ftcteam11574.teamcode2017;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -22,9 +23,34 @@ public class Generic_Drive extends LinearOpMode {
     public void info(String msg) {
         Log.i(LOG_TAG, msg);
     }
-    
 
-// An exception to throw to indicate that "Stop" was pressed (or fired
+    enum StartingPosition {
+        Unknown,
+        North,
+        South,
+    }
+
+    @NonNull
+    public StartingPosition getStartingPosition(AllianceColor ac) {
+        final LeftRight lr = check_LeftRight();
+        StartingPosition sp;
+
+        if (ac == AllianceColor.Blue && lr == LeftRight.Right)
+            sp = StartingPosition.South;
+        else if (ac == AllianceColor.Blue && lr == LeftRight.Left)
+            sp = StartingPosition.North;
+        else if (ac == AllianceColor.Red && lr == LeftRight.Right)
+            sp = StartingPosition.North;
+        else if (ac == AllianceColor.Red && lr == LeftRight.Left)
+            sp = StartingPosition.South;
+        else
+            sp = StartingPosition.Unknown;
+        return sp;
+    }
+
+
+
+    // An exception to throw to indicate that "Stop" was pressed (or fired
 // automatically due to timer expiration). The robot should stop
 // immediately to avoid penalty points or crashing.
 public class StopImmediatelyException extends RuntimeException {
@@ -56,6 +82,16 @@ public class StopImmediatelyException extends RuntimeException {
     // Set Glyph claw open position
     public static final double CLAW_OPEN_POSITION = 0.0;
 
+    public static final double CLAW_OPEN_PARTIALLY = 0.3;
+
+    public static final int CLAW_MOVEMENT_TIME = 1000;
+
+    public static final double LIFT_PINION_PITCH = 28.0;
+
+    public static final double LIFT_RACK_PITCH = 10.0;
+
+    public static final double LIFT_ENCODER_CPI = (LIFT_RACK_PITCH / LIFT_PINION_PITCH) * ENCODER_CPR;
+
 
     // Each of the colors we need to know about, only red and blue.
     public enum AllianceColor {
@@ -83,10 +119,10 @@ public class StopImmediatelyException extends RuntimeException {
     // The direction that each motor on the robot is oriented. The right-side motors are mounted
     // backwards relative to the left side ones.
     final private static DcMotorSimple.Direction MOTOR_DIRECTIONS[] = {
-            DcMotor.Direction.REVERSE, // mFL
-            DcMotor.Direction.FORWARD, // mFR
-            DcMotor.Direction.REVERSE, // mBL
-            DcMotor.Direction.FORWARD, // mBR
+            DcMotor.Direction.FORWARD, // mFL
+            DcMotor.Direction.REVERSE, // mFR
+            DcMotor.Direction.FORWARD, // mBL
+            DcMotor.Direction.REVERSE, // mBR
     };
     // Each driving direction supported by driving functions.
 
@@ -325,6 +361,31 @@ public class StopImmediatelyException extends RuntimeException {
         wait_for_one_encoder_satisfied();
     }
 
+    public void openGrabber() {
+        servoGrabberLeft.setPosition(CLAW_OPEN_POSITION);
+        servoGrabberRight.setPosition(CLAW_OPEN_POSITION);
+    }
+
+    public void closeGrabber() {
+        servoGrabberLeft.setPosition(CLAW_CLOSED_POSITION);
+        servoGrabberRight.setPosition(CLAW_CLOSED_POSITION);
+    }
+
+    public void OpenClawPartially() {
+        servoGrabberLeft.setPosition(CLAW_OPEN_PARTIALLY);
+        servoGrabberRight.setPosition(CLAW_OPEN_PARTIALLY);
+    }
+
+    public void positionGrabberLift(double height) {
+        motorGrabberLift.setTargetPosition((int)(height * LIFT_ENCODER_CPI));
+    }
+
+    public void waitForGrabberLift() {
+        while (should_keep_running()) {
+            if (motorGrabberLift.getCurrentPosition() == motorGrabberLift.getTargetPosition())
+                return;
+        }
+    }
 
     public Generic_Drive.AllianceColor check_alliance() {
         if (alliance_switch.getState())
@@ -356,6 +417,8 @@ public class StopImmediatelyException extends RuntimeException {
         // Initialize motorGrabberLift
         motorGrabberLift = hardwareMap.dcMotor.get("mLS");
         motorGrabberLift.setDirection(DcMotor.Direction.REVERSE);
+        motorGrabberLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
 
         // Initialize grabber servos
         servoGrabberLeft = hardwareMap.servo.get("SL");
