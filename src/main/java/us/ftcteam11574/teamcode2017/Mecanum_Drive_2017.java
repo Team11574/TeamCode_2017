@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Mecanum_Drive_2017 extends OpMode {
     public static final double CLAW_CLOSED_POSITION = 1.0;
     public static final double CLAW_OPEN_POSITION = 0.0;
-    public static final double CLAW_OPEN_PARTIALLY = 0.3;
+    public static final double CLAW_OPEN_PARTIALLY = 0.5;
     DcMotor mFL, mBL, mFR, mBR, mLS;
     Servo SR, SL;
 
@@ -32,6 +32,7 @@ public class Mecanum_Drive_2017 extends OpMode {
         mFR.setDirection(DcMotor.Direction.FORWARD);
         mBR.setDirection(DcMotor.Direction.FORWARD);
         mLS.setDirection(DcMotor.Direction.REVERSE);
+        mLS.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         SL.setDirection(Servo.Direction.REVERSE);
 
         mFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -59,21 +60,20 @@ public class Mecanum_Drive_2017 extends OpMode {
         if (OpenClaw) {
             SL.setPosition(CLAW_OPEN_POSITION);
             SR.setPosition(CLAW_OPEN_POSITION);
-        }else if (CloseClaw){
+        } else if (CloseClaw) {
             SL.setPosition(CLAW_CLOSED_POSITION);
             SR.setPosition(CLAW_CLOSED_POSITION);
-       /* }else (OpenClawPartially) {
-                SL.setPosition(CLAW_OPEN_PARTIALLY);
+        } else if (OpenClawPartially) {
+            SL.setPosition(CLAW_OPEN_PARTIALLY);
+            SR.setPosition(CLAW_OPEN_PARTIALLY);
 
-            }*/
         }
 
-            mFL.setPower(DriveY - DriveX + SpinLeft - SpinRight);
-            mBL.setPower(DriveY + DriveX + SpinLeft - SpinRight);
-            mFR.setPower(DriveY + DriveX - SpinLeft + SpinRight);
-            mBR.setPower(DriveY - DriveX - SpinLeft + SpinRight);
-            mLS.setPower(LiftSlide);
-            mLS.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        mFL.setPower(DriveY - DriveX + SpinLeft - SpinRight);
+        mBL.setPower(DriveY + DriveX + SpinLeft - SpinRight);
+        mFR.setPower(DriveY + DriveX - SpinLeft + SpinRight);
+        mBR.setPower(DriveY - DriveX - SpinLeft + SpinRight);
+        mLS.setPower(LiftSlide);
 
     }
 }

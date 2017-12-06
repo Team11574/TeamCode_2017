@@ -15,7 +15,7 @@ public class AutonomousGlyphTest extends Generic_Drive {
         sleep(CLAW_MOVEMENT_TIME);
         positionGrabberLift(3);
         waitForGrabberLift();
-        positionGrabberLift(0);
+        positionGrabberLift(0.5);
         waitForGrabberLift();
 
 

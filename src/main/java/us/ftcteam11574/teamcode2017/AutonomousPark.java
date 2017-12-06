@@ -1,30 +1,16 @@
 package us.ftcteam11574.teamcode2017;
 
+import android.support.annotation.NonNull;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="AutonomousPark", group="Autonomous")
 @SuppressWarnings("unused")
 public class AutonomousPark extends Generic_Drive {
-    private enum StartingPosition{
-        Unknown,
-        North,
-        South,
-    }
     @Override
     public void robotRun() {
-        StartingPosition sp;
         final AllianceColor ac = check_alliance();
-        final LeftRight lr = check_LeftRight();
-        if (ac == AllianceColor.Blue && lr == LeftRight.Right)
-            sp = StartingPosition.South;
-        else if (ac == AllianceColor.Blue && lr == LeftRight.Left)
-            sp = StartingPosition.North;
-        else if (ac == AllianceColor.Red && lr == LeftRight.Right)
-            sp = StartingPosition.North;
-        else if (ac == AllianceColor.Red && lr == LeftRight.Left)
-            sp = StartingPosition.South;
-        else
-            sp = StartingPosition.Unknown;
+        StartingPosition sp = getStartingPosition(ac);
 
         if (sp == StartingPosition.South) {
             int strafe_direction;
@@ -58,5 +44,6 @@ public class AutonomousPark extends Generic_Drive {
 
 
     }
+
 
 }

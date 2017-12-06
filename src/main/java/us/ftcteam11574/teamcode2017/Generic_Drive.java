@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 import java.util.Locale;
-import java.util.ServiceLoader;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class Generic_Drive extends LinearOpMode {
@@ -375,15 +374,30 @@ public class StopImmediatelyException extends RuntimeException {
         servoGrabberLeft.setPosition(CLAW_OPEN_PARTIALLY);
         servoGrabberRight.setPosition(CLAW_OPEN_PARTIALLY);
     }
+    private double previousGrabberLiftHeight = 0.0;
+    private double targetGrabberLiftHeight = 0.0;
 
     public void positionGrabberLift(double height) {
-        motorGrabberLift.setTargetPosition((int)(height * LIFT_ENCODER_CPI));
+        previousGrabberLiftHeight = targetGrabberLiftHeight;
+        targetGrabberLiftHeight = height * LIFT_ENCODER_CPI;
+        motorGrabberLift.setTargetPosition((int)(targetGrabberLiftHeight));
+        motorGrabberLift.setPower(0.5);
+
     }
 
     public void waitForGrabberLift() {
         while (should_keep_running()) {
-            if (motorGrabberLift.getCurrentPosition() == motorGrabberLift.getTargetPosition())
-                return;
+            telemetry.addData("Position...", motorGrabberLift.getCurrentPosition());
+            telemetry.addData("Target...", motorGrabberLift.getTargetPosition());
+            telemetry.update();
+            if (previousGrabberLiftHeight < targetGrabberLiftHeight) { // moving up
+                if (motorGrabberLift.getCurrentPosition() >= (motorGrabberLift.getTargetPosition()-40))
+                    return;
+            } else if (previousGrabberLiftHeight > targetGrabberLiftHeight) { //moving down
+                if (motorGrabberLift.getCurrentPosition() <= (motorGrabberLift.getTargetPosition()+40))
+                    return;
+            }
+
         }
     }
 
@@ -416,7 +430,7 @@ public class StopImmediatelyException extends RuntimeException {
         }
         // Initialize motorGrabberLift
         motorGrabberLift = hardwareMap.dcMotor.get("mLS");
-        motorGrabberLift.setDirection(DcMotor.Direction.REVERSE);
+        motorGrabberLift.setDirection(DcMotor.Direction.FORWARD);
         motorGrabberLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
