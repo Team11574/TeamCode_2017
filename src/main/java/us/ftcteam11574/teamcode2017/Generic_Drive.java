@@ -1,8 +1,8 @@
 package us.ftcteam11574.teamcode2017;
 
+
 import android.support.annotation.NonNull;
 import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.GyroSensor;
-
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import java.util.Locale;
 
@@ -165,6 +165,9 @@ public class StopImmediatelyException extends RuntimeException {
 
     // The gyro sensor.
   //  GyroSensor gyro;
+
+    //The color sensor on the jewel arm.
+    ColorSensor JewelColor;
 
     // Convert a distance, in inches, into an encoder count, including a wheel slippage correction
     // factor.
