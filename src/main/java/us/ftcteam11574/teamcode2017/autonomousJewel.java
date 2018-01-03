@@ -1,14 +1,13 @@
+/*
 package us.ftcteam11574.teamcode2017;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-/**
- * Created by Sara N on 12/7/2017.
- */
 
 @Autonomous(name = "Autonomous Jewel and Park", group="Autonomous")
 @SuppressWarnings("unused")
 public class autonomousJewel extends Generic_Drive {
+
     @Override
         public void robotRun() {
             final AllianceColor ac = check_alliance();
@@ -28,8 +27,8 @@ public class autonomousJewel extends Generic_Drive {
                 drive_distance(strafe_direction, 11.0, 0.5);
                 stop_all_motors();
             }  if (sp == StartingPosition.North) {
-            int strafe_direction;
         }   else if (ac == AllianceColor.Blue)
+            int strafe_direction;
                 strafe_direction = STRAFE_RIGHT;
                 strafe_direction = STRAFE_LEFT;
 
@@ -47,3 +46,4 @@ public class autonomousJewel extends Generic_Drive {
             }
         }
     }
+*/
