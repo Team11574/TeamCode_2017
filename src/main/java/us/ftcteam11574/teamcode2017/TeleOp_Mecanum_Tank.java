@@ -11,12 +11,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "TeleOp_Mecanum_Tank")
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class TeleOp_Mecanum_Tank extends OpMode {
-    public static final double CLAW_OPEN_POSITION = 0.0;
+    public static final double CLAW_OPEN_POSITION = 0.05;
     public static final double CLAW_OPEN_PARTIALLY = 0.5;
-    public static final double CLAW_CLOSED_POSITION = 1.0;
+    public static final double CLAW_CLOSED_POSITION = 0.7;
+
+    public static final double JEWEL_ARM_UP = 0.0;
+    public static final double JEWEL_ARM_DOWN = 1.0;
 
     DcMotor mFL, mBL, mFR, mBR, mLS;
-    Servo SR, SL;
+    Servo SR, SL, SJ1, SJ2;
 
     @Override
     public void init() {
@@ -41,10 +44,23 @@ public class TeleOp_Mecanum_Tank extends OpMode {
 
         SR = hardwareMap.servo.get("SR");
         SL = hardwareMap.servo.get("SL");
+        SJ1 = hardwareMap.servo.get("SJ1");
+        SJ2 = hardwareMap.servo.get("SJ2");
+
         SR.setDirection(Servo.Direction.FORWARD);
         SL.setDirection(Servo.Direction.REVERSE);
+        SJ1.setDirection(Servo.Direction.REVERSE);
+        SJ2.setDirection(Servo.Direction.FORWARD);
 
         gamepad1.setJoystickDeadzone(0.05f);
+    }
+
+    @Override
+    public void start() {
+        SR.setPosition(CLAW_OPEN_POSITION);
+        SL.setPosition(CLAW_OPEN_POSITION);
+        SJ1.setPosition(JEWEL_ARM_UP);
+        SJ2.setPosition(JEWEL_ARM_UP);
     }
 
     @Override
@@ -77,6 +93,25 @@ public class TeleOp_Mecanum_Tank extends OpMode {
         boolean CloseClaw = gamepad1.y || gamepad2.y;
         boolean OpenClawPartially = gamepad1.b || gamepad2.b;
 
+        //    Dpad down: lower jewel arm
+        //    Dpad up: raise jewel arm
+        boolean lowerRightJewelArm = gamepad1.dpad_down;
+        boolean raiseRightJewelArm = gamepad1.dpad_up;
+        boolean lowerLeftJewelArm = gamepad1.dpad_right;
+        boolean raiseLeftJewelArm = gamepad1.dpad_left;
+
+        if (lowerRightJewelArm) {
+            SJ1.setPosition(JEWEL_ARM_DOWN);
+        } else if (raiseRightJewelArm) {
+            SJ1.setPosition(JEWEL_ARM_UP);
+        }
+
+        if (lowerLeftJewelArm) {
+            SJ2.setPosition(JEWEL_ARM_DOWN);
+        } else if (raiseLeftJewelArm) {
+            SJ2.setPosition(JEWEL_ARM_UP);
+        }
+
         // Set the appropriate positions for the grabber claw servos.
         if (OpenClaw) {
             SL.setPosition(CLAW_OPEN_POSITION);
@@ -88,5 +123,15 @@ public class TeleOp_Mecanum_Tank extends OpMode {
             SL.setPosition(CLAW_OPEN_PARTIALLY);
             SR.setPosition(CLAW_OPEN_PARTIALLY);
         }
+    }
+
+    @Override
+    public void stop() {
+        mLS.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        SL.close();
+        SR.close();
+        SJ1.close();
+        SJ2.close();
     }
 }
