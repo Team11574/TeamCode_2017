@@ -84,10 +84,11 @@ public class StopImmediatelyException extends RuntimeException {
     public static final double CLAW_LEFT_CLOSED_POSITION = 0.7;
     public static final double CLAW_RIGHT_CLOSED_POSITION = 0.7;
 
+    public static final double JEWEL_LEFT_ARM_UP = 0.0;
+    public static final double JEWEL_RIGHT_ARM_UP = 0.0;
 
-    public static final double JEWEL_ARM_UP = 0.0;
-
-    public static final double JEWEL_ARM_DOWN = 1.0;
+    public static final double JEWEL_LEFT_ARM_DOWN = 1.0;
+    public static final double JEWEL_RIGHT_ARM_DOWN = 1.0;
 
     public static final int CLAW_MOVEMENT_TIME = 1000;
 
@@ -397,6 +398,22 @@ public class StopImmediatelyException extends RuntimeException {
         servoGrabberLeft.setPosition(CLAW_LEFT_OPEN_PARTIALLY);
         servoGrabberRight.setPosition(CLAW_RIGHT_OPEN_PARTIALLY);
     }
+    public void lowerLeftJewel() {
+        servoJewelLeft.setPosition(JEWEL_LEFT_ARM_DOWN);
+    }
+
+    public void raiseLeftJewel() {
+        servoJewelLeft.setPosition(JEWEL_LEFT_ARM_UP);
+    }
+
+    public void lowerRightJewel() {
+        servoJewelRight.setPosition(JEWEL_RIGHT_ARM_DOWN);
+    }
+
+    public void raiseRightJewel() {
+        servoJewelRight.setPosition(JEWEL_RIGHT_ARM_UP);
+    }
+
     private double previousGrabberLiftHeight = 0.0;
     private double targetGrabberLiftHeight = 0.0;
 

@@ -54,15 +54,15 @@ public class TeleOp_Mecanum_Tank extends Generic_Drive {
         boolean raiseLeftJewelArm = gamepad1.dpad_left;
 
         if (lowerRightJewelArm) {
-            servoJewelRight.setPosition(JEWEL_ARM_DOWN);
+            lowerRightJewel();
         } else if (raiseRightJewelArm) {
-            servoJewelRight.setPosition(JEWEL_ARM_UP);
+            raiseRightJewel();
         }
 
         if (lowerLeftJewelArm) {
-            servoJewelLeft.setPosition(JEWEL_ARM_DOWN);
+            lowerLeftJewel();
         } else if (raiseLeftJewelArm) {
-            servoJewelLeft.setPosition(JEWEL_ARM_UP);
+            raiseLeftJewel();
         }
 
         // Set the appropriate positions for the grabber claw servos.
