@@ -75,13 +75,15 @@ public class StopImmediatelyException extends RuntimeException {
     // The factor of slippage of wheels when strafing. Measured to be about 8%.
     final private static double STRAFE_SLIPPAGE_FACTOR = 1.08;
 
-    // Set Glyph claw closed position
-    public static final double CLAW_CLOSED_POSITION = 1.0;
+    public static final double CLAW_OPEN_POSITION = 0.05;
 
-    // Set Glyph claw open position
-    public static final double CLAW_OPEN_POSITION = 0.0;
+    public static final double CLAW_OPEN_PARTIALLY = 0.5;
 
-    public static final double CLAW_OPEN_PARTIALLY = 0.3;
+    public static final double CLAW_CLOSED_POSITION = 0.7;
+
+    public static final double JEWEL_ARM_UP = 0.0;
+
+    public static final double JEWEL_ARM_DOWN = 1.0;
 
     public static final int CLAW_MOVEMENT_TIME = 1000;
 
@@ -105,12 +107,12 @@ public class StopImmediatelyException extends RuntimeException {
         Right,
  }
     // Each of the motors on the robot.
-    final private static int MOTOR_COUNT = 4;
-    final private static int mFL = 0;
-    final private static int mFR = 1;
-    final private static int mBL = 2;
-    final private static int mBR = 3;
-    final private static String[] MOTOR_NAMES = {
+    final public static int MOTOR_COUNT = 4;
+    final public static int mFL = 0;
+    final public static int mFR = 1;
+    final public static int mBL = 2;
+    final public static int mBR = 3;
+    final public static String[] MOTOR_NAMES = {
             "mFL", "mFR", "mBL", "mBR"
     };
 
@@ -157,7 +159,13 @@ public class StopImmediatelyException extends RuntimeException {
     // a variable for the right servo
     Servo servoGrabberRight;
 
-  // The chassis-mounted red/blue alliance switch for autonomous mode.
+    // a variable for the left jewel servo
+    Servo servoJewelLeft;
+
+    // a variable for the right jewel servo
+    Servo servoJewelRight;
+
+    // The chassis-mounted red/blue alliance switch for autonomous mode.
     DigitalChannel alliance_switch;
 
     //The LeftRight switch
@@ -441,6 +449,10 @@ public class StopImmediatelyException extends RuntimeException {
         servoGrabberLeft = hardwareMap.servo.get("SL");
         servoGrabberRight = hardwareMap.servo.get("SR");
         servoGrabberLeft.setDirection(Servo.Direction.REVERSE);
+
+        servoGrabberRight = hardwareMap.servo.get("SJ1");
+        servoGrabberLeft = hardwareMap.servo.get("SJ2");
+        servoGrabberRight.setDirection(Servo.Direction.REVERSE);
 
 
         // Make sure everything starts out stopped.
