@@ -75,11 +75,15 @@ public class StopImmediatelyException extends RuntimeException {
     // The factor of slippage of wheels when strafing. Measured to be about 8%.
     final private static double STRAFE_SLIPPAGE_FACTOR = 1.08;
 
-    public static final double CLAW_OPEN_POSITION = 0.05;
+    public static final double CLAW_LEFT_OPEN_POSITION = 0.05;
+    public static final double CLAW_RIGHT_OPEN_POSITION = 0.05;
 
-    public static final double CLAW_OPEN_PARTIALLY = 0.5;
+    public static final double CLAW_LEFT_OPEN_PARTIALLY = 0.5;
+    public static final double CLAW_RIGHT_OPEN_PARTIALLY = 0.5;
 
-    public static final double CLAW_CLOSED_POSITION = 0.7;
+    public static final double CLAW_LEFT_CLOSED_POSITION = 0.7;
+    public static final double CLAW_RIGHT_CLOSED_POSITION = 0.7;
+
 
     public static final double JEWEL_ARM_UP = 0.0;
 
@@ -380,18 +384,18 @@ public class StopImmediatelyException extends RuntimeException {
     }
 
     public void openGrabber() {
-        servoGrabberLeft.setPosition(CLAW_OPEN_POSITION);
-        servoGrabberRight.setPosition(CLAW_OPEN_POSITION);
+        servoGrabberLeft.setPosition(CLAW_LEFT_OPEN_POSITION);
+        servoGrabberRight.setPosition(CLAW_RIGHT_OPEN_POSITION);
     }
 
     public void closeGrabber() {
-        servoGrabberLeft.setPosition(CLAW_CLOSED_POSITION);
-        servoGrabberRight.setPosition(CLAW_CLOSED_POSITION);
+        servoGrabberLeft.setPosition(CLAW_LEFT_CLOSED_POSITION);
+        servoGrabberRight.setPosition(CLAW_RIGHT_CLOSED_POSITION);
     }
 
     public void OpenClawPartially() {
-        servoGrabberLeft.setPosition(CLAW_OPEN_PARTIALLY);
-        servoGrabberRight.setPosition(CLAW_OPEN_PARTIALLY);
+        servoGrabberLeft.setPosition(CLAW_LEFT_OPEN_PARTIALLY);
+        servoGrabberRight.setPosition(CLAW_RIGHT_OPEN_PARTIALLY);
     }
     private double previousGrabberLiftHeight = 0.0;
     private double targetGrabberLiftHeight = 0.0;

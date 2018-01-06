@@ -30,7 +30,7 @@ public class TeleOp_Mecanum_Tank extends Generic_Drive {
         motor[mBL].setPower(DriveLeft + Strafe);
         motor[mFR].setPower(DriveRight + Strafe);
         motor[mBR].setPower(DriveRight - Strafe);
-        
+
         // Lower and raise the grabber slide with the left and right bumper buttons respectively.
         double LiftSlide = (gamepad1.left_bumper || gamepad2.left_bumper ? -1.0 : 0.0) +
                 (gamepad1.right_bumper || gamepad2.right_bumper ? +1.0 : 0.0);
@@ -67,14 +67,11 @@ public class TeleOp_Mecanum_Tank extends Generic_Drive {
 
         // Set the appropriate positions for the grabber claw servos.
         if (OpenClaw) {
-            servoGrabberLeft.setPosition(CLAW_OPEN_POSITION);
-            servoGrabberRight.setPosition(CLAW_OPEN_POSITION);
+            openGrabber();
         } else if (CloseClaw) {
-            servoGrabberLeft.setPosition(CLAW_CLOSED_POSITION);
-            servoGrabberRight.setPosition(CLAW_CLOSED_POSITION);
+            closeGrabber();
         } else if (OpenClawPartially) {
-            servoGrabberLeft.setPosition(CLAW_OPEN_PARTIALLY);
-            servoGrabberRight.setPosition(CLAW_OPEN_PARTIALLY);
+            OpenClawPartially();
         }
     }
 
