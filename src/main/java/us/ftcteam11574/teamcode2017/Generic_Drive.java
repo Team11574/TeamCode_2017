@@ -214,13 +214,21 @@ public class StopImmediatelyException extends RuntimeException {
         return true;
     }
 
-    // Stop all motors immediately.
-    public void stop_all_motors() {
+
+    public void set_mode_all_motors(DcMotor.RunMode mode) {
         for(int i=0; i < MOTOR_COUNT; i++) {
-            if(motor[i].getMode() != DcMotor.RunMode.STOP_AND_RESET_ENCODER) {
-                motor[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            if(motor[i].getMode() != mode) {
+                motor[i].setMode(mode);
             }
         }
+    }
+    // Stop all motors immediately.
+    public void stop_all_motors() {
+        set_mode_all_motors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    public void allow_control_all_motors() {
+        set_mode_all_motors(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     // Set the power of a given motor.
@@ -450,9 +458,9 @@ public class StopImmediatelyException extends RuntimeException {
         servoGrabberRight = hardwareMap.servo.get("SR");
         servoGrabberLeft.setDirection(Servo.Direction.REVERSE);
 
-        servoGrabberRight = hardwareMap.servo.get("SJ1");
-        servoGrabberLeft = hardwareMap.servo.get("SJ2");
-        servoGrabberRight.setDirection(Servo.Direction.REVERSE);
+        servoJewelRight = hardwareMap.servo.get("SJ1");
+        servoJewelLeft = hardwareMap.servo.get("SJ2");
+        servoJewelRight.setDirection(Servo.Direction.REVERSE);
 
 
         // Make sure everything starts out stopped.
