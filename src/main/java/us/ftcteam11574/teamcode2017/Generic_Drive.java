@@ -75,8 +75,8 @@ public class StopImmediatelyException extends RuntimeException {
     // The factor of slippage of wheels when strafing. Measured to be about 8%.
     final private static double STRAFE_SLIPPAGE_FACTOR = 1.08;
 
-    public static final double CLAW_LEFT_OPEN_POSITION = 0.05;
-    public static final double CLAW_RIGHT_OPEN_POSITION = 0.05;
+    public static final double CLAW_LEFT_OPEN_POSITION = 0.09;
+    public static final double CLAW_RIGHT_OPEN_POSITION = 0.09;
 
     public static final double CLAW_LEFT_OPEN_PARTIALLY = 0.5;
     public static final double CLAW_RIGHT_OPEN_PARTIALLY = 0.5;
