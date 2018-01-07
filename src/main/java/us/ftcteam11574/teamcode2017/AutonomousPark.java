@@ -1,7 +1,5 @@
 package us.ftcteam11574.teamcode2017;
 
-import android.support.annotation.NonNull;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="AutonomousPark", group="Autonomous")
@@ -37,13 +35,6 @@ public class AutonomousPark extends Generic_Drive {
             stop_all_motors();
             drive_distance(DRIVE_FORWARD, 5.5, .5);
             stop_all_motors();
-            //drive_distance(DRIVE_FORWARD, 2.5, 0.5);
-            // stop_all_motors();
-
         }
-
-
     }
-
-
 }

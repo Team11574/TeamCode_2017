@@ -2,12 +2,9 @@ package us.ftcteam11574.teamcode2017;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-/**
- * Created by Sara N on 1/6/2018.
- */
-
 @TeleOp
-public class Test_Jewel extends Generic_Drive {
+@SuppressWarnings({"unused", "WeakerAccess"})
+public class TestJewel extends Generic_Drive {
     public void robotLoop() {
         double leftJewel = -gamepad1.left_stick_y;
         double rightJewel = -gamepad1.right_stick_y;
@@ -19,6 +16,7 @@ public class Test_Jewel extends Generic_Drive {
         telemetry.addData("Right", rightJewel);
         telemetry.update();
     }
+
     @Override
     public void robotRun() {
         openGrabber();

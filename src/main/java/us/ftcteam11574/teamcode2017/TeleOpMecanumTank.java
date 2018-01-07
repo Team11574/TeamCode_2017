@@ -6,17 +6,9 @@ package us.ftcteam11574.teamcode2017;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "TeleOp_Mecanum_Tank")
+@TeleOp(name = "TeleOpMecanumTank")
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class TeleOp_Mecanum_Tank extends Generic_Drive {
-
-    @Override
-    public void robotInit() {
-        super.robotInit();
-        allow_control_all_motors();
-        motorGrabberLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
+public class TeleOpMecanumTank extends Generic_Drive {
     public void robotLoop() {
         // Drive the left and right sides with the Y axis of left and right sticks respectively.
         double DriveLeft = -gamepad1.left_stick_y;
@@ -77,6 +69,9 @@ public class TeleOp_Mecanum_Tank extends Generic_Drive {
 
     @Override
     public void robotRun() {
+        allow_control_all_motors();
+        motorGrabberLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         while (should_keep_running()) {
             robotLoop();
         }

@@ -1,7 +1,5 @@
 package us.ftcteam11574.teamcode2017;
 
-import android.support.annotation.NonNull;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="Autonomous Jewel and Park and Glyph", group="Autonomous")
@@ -58,7 +56,7 @@ public class AutonomousJewel extends Generic_Drive {
         drive_distance(returnDirection, 3, 0.2);
         stop_all_motors();
 
-        // move to cryptobox using ifs
+        // Move to the Cryptobox.
         if (sp == StartingPosition.South) {
             int strafe_direction;
             if (ac == AllianceColor.Blue) {
@@ -79,6 +77,7 @@ public class AutonomousJewel extends Generic_Drive {
                 strafe_direction = STRAFE_RIGHT;
             else
                 strafe_direction = STRAFE_LEFT;
+
             // Drive to park in front of blue Cryptobox.
             drive_distance(DRIVE_FORWARD, 18.0, 0.5);
             stop_all_motors();
@@ -86,15 +85,9 @@ public class AutonomousJewel extends Generic_Drive {
             stop_all_motors();
             drive_distance(DRIVE_FORWARD, 5.5, .5);
             stop_all_motors();
-
-
         }
+
         openGrabber();
         waitForClaw();
-
-
-
     }
-
-
 }
