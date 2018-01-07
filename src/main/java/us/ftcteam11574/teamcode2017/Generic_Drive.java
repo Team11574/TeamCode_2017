@@ -11,13 +11,14 @@ import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.Locale;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class Generic_Drive extends LinearOpMode {
     // Tag to log messages to the Android log with.
-    final public static String LOG_TAG = "FTC";
+    final public static String LOG_TAG = "FTC11574";
 
     public void info(String msg) {
         Log.i(LOG_TAG, msg);
@@ -90,7 +91,9 @@ public class StopImmediatelyException extends RuntimeException {
     public static final double JEWEL_LEFT_ARM_DOWN = 1.0;
     public static final double JEWEL_RIGHT_ARM_DOWN = 1.0;
 
-    public static final int CLAW_MOVEMENT_TIME = 1000;
+    public static final int CLAW_MOVEMENT_TIME = 200;
+
+    public static final int JEWEL_ARM_MOVEMENT_TIME = 500;
 
     public static final double LIFT_PINION_PITCH = 28.0;
 
@@ -179,8 +182,11 @@ public class StopImmediatelyException extends RuntimeException {
     // The gyro sensor.
   //  GyroSensor gyro;
 
-    //The color sensor on the jewel arm.
-    ColorSensor JewelColor;
+    //The left color sensor on the jewel arm.
+    ColorSensor JewelColorLeft;
+
+    //The right color sensor on the jewel arm.
+    ColorSensor JewelColorRight;
 
     // Convert a distance, in inches, into an encoder count, including a wheel slippage correction
     // factor.
@@ -440,6 +446,15 @@ public class StopImmediatelyException extends RuntimeException {
 
         }
     }
+    public void waitForJewelArm() {
+        ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        while (should_keep_running() && elapsedTime.time() < JEWEL_ARM_MOVEMENT_TIME);
+    }
+
+    public void waitForClaw() {
+        ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        while (should_keep_running() && elapsedTime.time() < CLAW_MOVEMENT_TIME);
+    }
 
     public Generic_Drive.AllianceColor check_alliance() {
         if (alliance_switch.getState())
@@ -453,6 +468,32 @@ public class StopImmediatelyException extends RuntimeException {
             return LeftRight.Right;
         else
             return LeftRight.Left;
+    }
+
+    private int JEWEL_COLOR_SAMPLES = 10;
+    public AllianceColor checkJewelColor(ColorSensor sensor) {
+        int red = 0;
+        int blue = 0;
+
+        ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        for (int i = 0; i < JEWEL_COLOR_SAMPLES; i++) {
+            red += sensor.red();
+            blue += sensor.blue();
+            while (should_keep_running() && elapsedTime.time() < 10);
+            elapsedTime.reset();
+        }
+        red /= JEWEL_COLOR_SAMPLES;
+        blue /= JEWEL_COLOR_SAMPLES;
+
+        info(String.format(Locale.US, "checkJewelColor: red = %d, blue = %d", red, blue));
+        if (red < 5 || blue < 5)
+            return AllianceColor.Unknown;
+        else if (red > blue)
+            return AllianceColor.Red;
+        else if (blue > red)
+            return AllianceColor.Blue;
+        else
+            return AllianceColor.Unknown;
     }
 
     // Initialize the robot and all its sensors.
@@ -497,6 +538,12 @@ public class StopImmediatelyException extends RuntimeException {
         info("* Initializing Left_Right switch...");
         Left_Right = hardwareMap.digitalChannel.get("left_right_switch");
         Left_Right.setMode(DigitalChannelController.Mode.INPUT);
+
+        // Initialize the color sensor for the jewel arm.
+        info("* Initializing the jewel color sensors...");
+        JewelColorLeft = hardwareMap.colorSensor.get("jewel_color_left");
+        JewelColorRight = hardwareMap.colorSensor.get("jewel_color_right");
+
 
         // Initialize the gyro.
        /* info("* Initializing gyro sensor...");
