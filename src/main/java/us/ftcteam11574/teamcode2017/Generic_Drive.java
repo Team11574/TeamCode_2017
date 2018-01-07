@@ -1,13 +1,11 @@
 package us.ftcteam11574.teamcode2017;
 
-
 import android.support.annotation.NonNull;
 import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -48,15 +46,12 @@ public class Generic_Drive extends LinearOpMode {
         return sp;
     }
 
-
-
     // An exception to throw to indicate that "Stop" was pressed (or fired
-// automatically due to timer expiration). The robot should stop
-// immediately to avoid penalty points or crashing.
-public class StopImmediatelyException extends RuntimeException {
-    public StopImmediatelyException() { super(); }
-}
-
+    // automatically due to timer expiration). The robot should stop
+    // immediately to avoid penalty points or crashing.
+    public class StopImmediatelyException extends RuntimeException {
+        public StopImmediatelyException() { super(); }
+    }
 
     // Number of encoder counts per wheel revolution.
     final private static int ENCODER_CPR = 1120;
@@ -101,19 +96,22 @@ public class StopImmediatelyException extends RuntimeException {
 
     public static final double LIFT_ENCODER_CPI = (LIFT_RACK_PITCH / LIFT_PINION_PITCH) * ENCODER_CPR;
 
+    private static final int JEWEL_COLOR_SAMPLES = 10;
 
     // Each of the colors we need to know about, only red and blue.
     public enum AllianceColor {
-    Unknown,
-    Red,
-    Blue,
-}
+        Unknown,
+        Red,
+        Blue,
+    }
+
     // Each of the sides we need to know about
     public enum LeftRight {
         Unknown,
         Left,
         Right,
- }
+    }
+
     // Each of the motors on the robot.
     final public static int MOTOR_COUNT = 4;
     final public static int mFL = 0;
@@ -124,7 +122,6 @@ public class StopImmediatelyException extends RuntimeException {
             "mFL", "mFR", "mBL", "mBR"
     };
 
-
     // The direction that each motor on the robot is oriented. The right-side motors are mounted
     // backwards relative to the left side ones.
     final private static DcMotorSimple.Direction MOTOR_DIRECTIONS[] = {
@@ -133,8 +130,8 @@ public class StopImmediatelyException extends RuntimeException {
             DcMotor.Direction.FORWARD, // mBL
             DcMotor.Direction.REVERSE, // mBR
     };
-    // Each driving direction supported by driving functions.
 
+    // Each driving direction supported by driving functions.
     final public static int DRIVE_FORWARD  = 0;
     final public static int DRIVE_BACKWARD = 1;
     final public static int TURN_LEFT      = 2;
@@ -155,6 +152,7 @@ public class StopImmediatelyException extends RuntimeException {
             { -0.97, +0.97, +1.00, -1.00 }, // STRAFE_LEFT
             { +1.00, -0.92, -0.92, +1.04 }, // STRAFE_RIGHT
     };
+
     // An array of DcMotors to represent all of the motors.
     DcMotor motor[];
 
@@ -180,7 +178,7 @@ public class StopImmediatelyException extends RuntimeException {
     DigitalChannel Left_Right;
 
     // The gyro sensor.
-  //  GyroSensor gyro;
+    //GyroSensor gyro;
 
     //The left color sensor on the jewel arm.
     ColorSensor JewelColorLeft;
@@ -225,7 +223,6 @@ public class StopImmediatelyException extends RuntimeException {
         return true;
     }
 
-
     public void set_mode_all_motors(DcMotor.RunMode mode) {
         for(int i=0; i < MOTOR_COUNT; i++) {
             if(motor[i].getMode() != mode) {
@@ -233,6 +230,7 @@ public class StopImmediatelyException extends RuntimeException {
             }
         }
     }
+
     // Stop all motors immediately.
     public void stop_all_motors() {
         set_mode_all_motors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -470,7 +468,6 @@ public class StopImmediatelyException extends RuntimeException {
             return LeftRight.Left;
     }
 
-    private int JEWEL_COLOR_SAMPLES = 10;
     public AllianceColor checkJewelColor(ColorSensor sensor) {
         int red = 0;
         int blue = 0;
@@ -509,11 +506,11 @@ public class StopImmediatelyException extends RuntimeException {
             motor[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motor[i].setPower(0.0);
         }
+
         // Initialize motorGrabberLift
         motorGrabberLift = hardwareMap.dcMotor.get("mLS");
         motorGrabberLift.setDirection(DcMotor.Direction.FORWARD);
         motorGrabberLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
 
         // Initialize grabber servos
         servoGrabberLeft = hardwareMap.servo.get("SL");
@@ -524,35 +521,33 @@ public class StopImmediatelyException extends RuntimeException {
         servoJewelLeft = hardwareMap.servo.get("SJ2");
         servoJewelRight.setDirection(Servo.Direction.REVERSE);
 
-
         // Make sure everything starts out stopped.
         stop_all_motors();
-
 
         // Initialize the alliance switch.
         info("* Initializing alliance switch...");
         alliance_switch = hardwareMap.digitalChannel.get("alliance_switch");
-        alliance_switch.setMode(DigitalChannelController.Mode.INPUT);
+        alliance_switch.setMode(DigitalChannel.Mode.INPUT);
 
         // Initialize the left_right switch.
         info("* Initializing Left_Right switch...");
         Left_Right = hardwareMap.digitalChannel.get("left_right_switch");
-        Left_Right.setMode(DigitalChannelController.Mode.INPUT);
+        Left_Right.setMode(DigitalChannel.Mode.INPUT);
 
         // Initialize the color sensor for the jewel arm.
         info("* Initializing the jewel color sensors...");
         JewelColorLeft = hardwareMap.colorSensor.get("jewel_color_left");
         JewelColorRight = hardwareMap.colorSensor.get("jewel_color_right");
 
-
         // Initialize the gyro.
-       /* info("* Initializing gyro sensor...");
+        /*
+        info("* Initializing gyro sensor...");
         gyro = hardwareMap.gyroSensor.get("gyro");
         telemetry.addData(">", "Calibrating gyro...");
         gyro.calibrate();
         while(gyro.isCalibrating() && !isStopRequested()){}
         info("Initialization complete.");
-    */
+        */
     }
 
 
@@ -610,6 +605,5 @@ public class StopImmediatelyException extends RuntimeException {
             throw new RuntimeException(t);
         }
     }
-
 }
 
