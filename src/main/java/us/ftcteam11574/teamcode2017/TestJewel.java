@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class TestJewel extends Generic_Drive {
     public void robotLoop() {
-        double leftJewel = -gamepad1.left_stick_y;
-        double rightJewel = -gamepad1.right_stick_y;
+        double leftJewel = -gamepad1.right_stick_x;
+        double rightJewel = -gamepad1.left_stick_x;
 
         servoJewelLeft.setPosition(leftJewel);
         servoJewelRight.setPosition(rightJewel);
