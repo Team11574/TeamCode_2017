@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -537,7 +538,11 @@ public class Generic_Drive extends LinearOpMode {
         // Initialize the color sensor for the jewel arm.
         info("* Initializing the jewel color sensors...");
         JewelColorLeft = hardwareMap.colorSensor.get("jewel_color_left");
+        JewelColorLeft.setI2cAddress(I2cAddr.create8bit(0x3a));
         JewelColorRight = hardwareMap.colorSensor.get("jewel_color_right");
+        JewelColorRight.setI2cAddress(I2cAddr.create8bit(0x3c));
+
+
 
         // Initialize the gyro.
         /*
