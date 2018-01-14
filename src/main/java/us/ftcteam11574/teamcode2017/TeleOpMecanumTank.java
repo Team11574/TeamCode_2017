@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class TeleOpMecanumTank extends Generic_Drive {
     public void robotLoop() {
         // Drive the left and right sides with the Y axis of left and right sticks respectively.
-        double DriveLeft = -gamepad1.left_stick_y;
-        double DriveRight = -gamepad1.right_stick_y;
+        double DriveLeft = -gamepad1.right_stick_y;
+        double DriveRight = -gamepad1.left_stick_y;
 
         // Strafe with the left and right analog trigger buttons.
         double Strafe = gamepad1.left_trigger - gamepad1.right_trigger;
@@ -38,25 +38,6 @@ public class TeleOpMecanumTank extends Generic_Drive {
         boolean CloseClaw = gamepad1.y || gamepad2.y;
         boolean OpenClawPartially = gamepad1.b || gamepad2.b;
 
-        //    Dpad down: lower jewel arm
-        //    Dpad up: raise jewel arm
-        boolean lowerRightJewelArm = gamepad1.dpad_down;
-        boolean raiseRightJewelArm = gamepad1.dpad_up;
-        boolean lowerLeftJewelArm = gamepad1.dpad_right;
-        boolean raiseLeftJewelArm = gamepad1.dpad_left;
-
-        if (lowerRightJewelArm) {
-            lowerRightJewel();
-        } else if (raiseRightJewelArm) {
-            raiseRightJewel();
-        }
-
-        if (lowerLeftJewelArm) {
-            lowerLeftJewel();
-        } else if (raiseLeftJewelArm) {
-            raiseLeftJewel();
-        }
-
         // Set the appropriate positions for the grabber claw servos.
         if (OpenClaw) {
             openGrabber();
@@ -69,6 +50,8 @@ public class TeleOpMecanumTank extends Generic_Drive {
 
     @Override
     public void robotRun() {
+        raiseLeftJewel();
+        raiseRightJewel();
         allow_control_all_motors();
         motorGrabberLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 

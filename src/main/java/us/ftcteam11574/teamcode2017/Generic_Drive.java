@@ -82,10 +82,10 @@ public class Generic_Drive extends LinearOpMode {
     public static final double CLAW_RIGHT_CLOSED_POSITION = 0.7;
 
     public static final double JEWEL_LEFT_ARM_UP = 0.0;
-    public static final double JEWEL_RIGHT_ARM_UP = 0.0;
+    public static final double JEWEL_RIGHT_ARM_UP = 0.05;
 
-    public static final double JEWEL_LEFT_ARM_DOWN = 1.0;
-    public static final double JEWEL_RIGHT_ARM_DOWN = 1.0;
+    public static final double JEWEL_LEFT_ARM_DOWN = 0.7;
+    public static final double JEWEL_RIGHT_ARM_DOWN = 0.7;
 
     public static final int CLAW_MOVEMENT_TIME = 200;
 
@@ -146,7 +146,7 @@ public class Generic_Drive extends LinearOpMode {
     // or increase the values to speed them up.
     final private static double DRIVE_DIRECTIONS[][] = {
             // mFL,  mFR,   mBL,   mBR
-            { +1.00, +1.00, +1.00, +1.00 }, // DRIVE_FORWARD
+            { +0.9, +1.00, +0.9, +1.00 }, // DRIVE_FORWARD
             { -1.00, -1.00, -1.00, -1.00 }, // DRIVE_BACKWARD
             { -1.00, +1.00, -1.00, +1.00 }, // TURN_LEFT
             { +1.00, -1.00, +1.00, -1.00 }, // TURN_RIGHT
@@ -484,9 +484,7 @@ public class Generic_Drive extends LinearOpMode {
         blue /= JEWEL_COLOR_SAMPLES;
 
         info(String.format(Locale.US, "checkJewelColor: red = %d, blue = %d", red, blue));
-        if (red < 5 || blue < 5)
-            return AllianceColor.Unknown;
-        else if (red > blue)
+        if (red > blue)
             return AllianceColor.Red;
         else if (blue > red)
             return AllianceColor.Blue;
