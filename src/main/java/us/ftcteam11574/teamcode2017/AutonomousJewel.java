@@ -76,11 +76,11 @@ public class AutonomousJewel extends Generic_Drive {
             drive_distance(DRIVE_FORWARD, 18.0, 0.5);
             stop_all_motors();
             if (ac == AllianceColor.Blue)
-                drive_distance(TURN_LEFT, 22, 0.25);
+                drive_distance(TURN_LEFT, 22.0, 0.25);
             else
-                drive_distance(TURN_RIGHT, 22, 0.25);
+                drive_distance(TURN_RIGHT, 22.0, 0.25);
             stop_all_motors();
-            drive_distance(DRIVE_FORWARD, 150, 0.5);
+            drive_distance(DRIVE_FORWARD, 15.0, 0.5);
             stop_all_motors();
         } else if (sp == StartingPosition.North) {
             // Drive to park in front of blue Cryptobox.
