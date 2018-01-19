@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class TeleOpMecanumTank extends Generic_Drive {
     public void robotLoop() {
         // Drive the left and right sides with the Y axis of left and right sticks respectively.
-        double DriveLeft = -gamepad1.right_stick_y;
-        double DriveRight = -gamepad1.left_stick_y;
+        double DriveLeft = -gamepad1.left_stick_y;
+        double DriveRight = -gamepad1.right_stick_y;
 
         // Strafe with the left and right analog trigger buttons.
         double Strafe = gamepad1.left_trigger - gamepad1.right_trigger;
