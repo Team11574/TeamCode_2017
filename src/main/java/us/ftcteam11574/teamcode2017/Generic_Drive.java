@@ -503,6 +503,7 @@ public class Generic_Drive extends LinearOpMode {
             motor[i] = hardwareMap.dcMotor.get(MOTOR_NAMES[i]);
             motor[i].setDirection(MOTOR_DIRECTIONS[i]);
             motor[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motor[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             motor[i].setPower(0.0);
         }
 
