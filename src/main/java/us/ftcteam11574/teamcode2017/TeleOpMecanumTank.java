@@ -5,6 +5,7 @@ package us.ftcteam11574.teamcode2017;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "TeleOpMecanumTank")
 @SuppressWarnings({"unused", "WeakerAccess"})
@@ -15,7 +16,9 @@ public class TeleOpMecanumTank extends Generic_Drive {
         double DriveRight = -gamepad1.right_stick_y;
 
         // Strafe with the left and right analog trigger buttons.
-        double Strafe = gamepad1.left_trigger - gamepad1.right_trigger;
+        double Strafe = gamepad1.left_trigger - gamepad1.right_trigger
+                - gamepad1.left_stick_x - gamepad1.right_stick_x;
+        Strafe = Range.clip(Strafe, -1.0, +1.0);
 
         // Set the appropriate power levels for each motor.
         motor[mFL].setPower(DriveLeft - Strafe);
