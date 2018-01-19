@@ -47,7 +47,7 @@ public class AutonomousJewel extends Generic_Drive {
             }
         }
 
-        drive_distance(bumpDirection, 3, 0.2);
+        drive_distance(bumpDirection, 3.0, 0.2);
         stop_all_motors();
 
         if (ac == AllianceColor.Blue) {
@@ -57,10 +57,10 @@ public class AutonomousJewel extends Generic_Drive {
         }
         waitForJewelArm();
 
-        drive_distance(returnDirection, 3, 0.2);
+        drive_distance(returnDirection, 3.0, 0.2);
         stop_all_motors();
 
-        drive_distance(DRIVE_FORWARD, 19.0, 0.5);
+        drive_distance(DRIVE_FORWARD, 20.0, 0.5);
         stop_all_motors();
 
         if (ac == AllianceColor.Blue) {
@@ -68,19 +68,26 @@ public class AutonomousJewel extends Generic_Drive {
         } else {
             drive_distance(STRAFE_LEFT, 10.0, 0.5);
         }
+        if (sp == StartingPosition.North) {
+            if (ac == AllianceColor.Blue) {
+                drive_distance(STRAFE_RIGHT, 2.5, 0.5);
+            } else {
+                drive_distance(STRAFE_LEFT, 2.5, 0.5);
+            }
+        }
         stop_all_motors();
 
         // Move to the Cryptobox.
         if (sp == StartingPosition.South) {
             // Drive to park in front of red Cryptobox.
-            drive_distance(DRIVE_FORWARD, 18.0, 0.5);
+            drive_distance(DRIVE_FORWARD, 10.0, 0.5);
             stop_all_motors();
             if (ac == AllianceColor.Blue)
-                drive_distance(TURN_LEFT, 22.0, 0.25);
+                drive_distance(TURN_LEFT, 18.0, 0.25);
             else
-                drive_distance(TURN_RIGHT, 22.0, 0.25);
+                drive_distance(TURN_RIGHT, 18.0, 0.25);
             stop_all_motors();
-            drive_distance(DRIVE_FORWARD, 15.0, 0.5);
+            drive_distance(DRIVE_FORWARD, 18.0, 0.5);
             stop_all_motors();
         } else if (sp == StartingPosition.North) {
             // Drive to park in front of blue Cryptobox.
@@ -92,9 +99,9 @@ public class AutonomousJewel extends Generic_Drive {
         waitForClaw();
         positionGrabberLift(0.0);
         waitForGrabberLift();
-        drive_distance(TURN_RIGHT, 3, 0.5);
+        drive_distance(TURN_RIGHT, 4.0, 0.5);
         drive_distance(DRIVE_FORWARD, 5.0, 0.5);
-        drive_distance(TURN_LEFT, 3, 0.5);
+        drive_distance(TURN_LEFT, 4.0, 0.5);
         drive_distance(DRIVE_BACKWARD, 3.5, 0.5);
         stop_all_motors();
     }
