@@ -12,6 +12,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
 import java.util.Locale;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -98,6 +104,9 @@ public class Generic_Drive extends LinearOpMode {
     public static final double LIFT_ENCODER_CPI = (LIFT_RACK_PITCH / LIFT_PINION_PITCH) * ENCODER_CPR;
 
     private static final int JEWEL_COLOR_SAMPLES = 10;
+
+    public static final double CRYPTOBOX_COLUMN_WIDTH = 7.63;
+
 
     // Each of the colors we need to know about, only red and blue.
     public enum AllianceColor {
@@ -186,6 +195,9 @@ public class Generic_Drive extends LinearOpMode {
 
     //The right color sensor on the jewel arm.
     ColorSensor JewelColorRight;
+
+    private VuforiaTrackable mRelicRecoveryVuMarks;
+
 
     // Convert a distance, in inches, into an encoder count, including a wheel slippage correction
     // factor.
@@ -490,6 +502,52 @@ public class Generic_Drive extends LinearOpMode {
             return AllianceColor.Blue;
         else
             return AllianceColor.Unknown;
+    }
+
+    public void vuforiaInit() {
+        // Find the Android View for Vuforia to display the camera's view.
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "cameraMonitorViewId", "id",
+                hardwareMap.appContext.getPackageName());
+
+        // Initialize the Vuforia parameters.
+        VuforiaLocalizer.Parameters vuforiaParameters =
+                new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        vuforiaParameters.vuforiaLicenseKey =
+                hardwareMap.appContext.getString(R.string.VuforiaLicenseKey);
+        vuforiaParameters.cameraDirection =
+                VuforiaLocalizer.CameraDirection.BACK;
+        VuforiaLocalizer vuforiaLocalizer =
+                ClassFactory.createVuforiaLocalizer(vuforiaParameters);
+
+        // Load the Relic Recovery VuMarks and activate them.
+        VuforiaTrackables vuforiaTrackables =
+                vuforiaLocalizer.loadTrackablesFromAsset("RelicVuMark");
+        vuforiaTrackables.activate();
+
+        // Save the Relic Recovery VuMarks in an instance variable for access later.
+        mRelicRecoveryVuMarks = vuforiaTrackables.get(0);
+
+    }
+
+    public void vuforiaDeInit() {
+
+    }
+
+    public RelicRecoveryVuMark checkVuMarkVisible(double timeout) {
+        ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+        info("Initializing Vuforia..." );
+        vuforiaInit();
+        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.UNKNOWN;
+        info("Checking for Vuforia VuMark...");
+        while (elapsedTime.time() < timeout && vuMark == RelicRecoveryVuMark.UNKNOWN) {
+            vuMark = RelicRecoveryVuMark.from(mRelicRecoveryVuMarks);
+        }
+        info("Found Vuforia VuMark: " + vuMark);
+        vuforiaDeInit();
+        info("DeInitialized Vuforia.");
+
+        return vuMark;
     }
 
     // Initialize the robot and all its sensors.

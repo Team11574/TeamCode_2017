@@ -2,6 +2,8 @@ package us.ftcteam11574.teamcode2017;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+
 @Autonomous(name="Autonomous Jewel and Park and Glyph", group="Autonomous")
 @SuppressWarnings("unused")
 public class AutonomousJewel extends Generic_Drive {
@@ -9,6 +11,7 @@ public class AutonomousJewel extends Generic_Drive {
     public void robotRun() {
         final AllianceColor ac = check_alliance();
         StartingPosition sp = getStartingPosition(ac);
+        RelicRecoveryVuMark vuMark = checkVuMarkVisible(5.0);
 
         // Close grabber on glyph then raise it.
         raiseLeftJewel();
@@ -87,13 +90,20 @@ public class AutonomousJewel extends Generic_Drive {
             else
                 drive_distance(TURN_RIGHT, 18.0, 0.25);
             stop_all_motors();
-            drive_distance(DRIVE_FORWARD, 18.0, 0.5);
-            stop_all_motors();
-        } else if (sp == StartingPosition.North) {
-            // Drive to park in front of blue Cryptobox.
-            drive_distance(DRIVE_FORWARD, 5.5, .5);
+            drive_distance(DRIVE_FORWARD, 12.5, 0.5);
             stop_all_motors();
         }
+
+        if (vuMark == RelicRecoveryVuMark.LEFT) {
+            drive_distance(STRAFE_LEFT, CRYPTOBOX_COLUMN_WIDTH, 0.25);
+            stop_all_motors();
+        } else if (vuMark == RelicRecoveryVuMark.RIGHT) {
+            drive_distance(STRAFE_RIGHT, CRYPTOBOX_COLUMN_WIDTH, 0.25);
+        }
+
+        // Drive to park in front of blue Cryptobox.
+        drive_distance(DRIVE_FORWARD, 5.5, .5);
+        stop_all_motors();
 
         openGrabber();
         waitForClaw();
