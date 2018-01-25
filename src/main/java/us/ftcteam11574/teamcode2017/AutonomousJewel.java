@@ -1,7 +1,6 @@
 package us.ftcteam11574.teamcode2017;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
 @Autonomous(name="Autonomous Jewel and Park and Glyph", group="Autonomous")
@@ -69,7 +68,7 @@ public class AutonomousJewel extends Generic_Drive {
         if (ac == AllianceColor.Blue) {
             drive_distance(STRAFE_RIGHT, 10.0, 0.5);
         } else {
-            drive_distance(STRAFE_LEFT, 10.0, 0.5);
+            drive_distance(STRAFE_LEFT, 15.0, 0.5);
         }
         if (sp == StartingPosition.North) {
             if (ac == AllianceColor.Blue) {
@@ -105,6 +104,7 @@ public class AutonomousJewel extends Generic_Drive {
         drive_distance(DRIVE_FORWARD, 5.5, .5);
         stop_all_motors();
 
+        // Place glyph
         openGrabber();
         waitForClaw();
         positionGrabberLift(0.0);
