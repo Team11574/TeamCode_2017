@@ -85,9 +85,9 @@ public class AutonomousJewel extends Generic_Drive {
             drive_distance(DRIVE_FORWARD, 10.0, 0.5);
             stop_all_motors();
             if (ac == AllianceColor.Blue)
-                drive_distance(TURN_LEFT, 18.0, 0.25);
+                drive_distance(TURN_LEFT, 16.0, 0.25);
             else
-                drive_distance(TURN_RIGHT, 18.0, 0.25);
+                drive_distance(TURN_RIGHT, 16.0, 0.25);
             stop_all_motors();
             drive_distance(DRIVE_FORWARD, 12.5, 0.5);
             stop_all_motors();
