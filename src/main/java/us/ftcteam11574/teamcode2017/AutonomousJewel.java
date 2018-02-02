@@ -68,7 +68,7 @@ public class AutonomousJewel extends Generic_Drive {
         if (ac == AllianceColor.Blue) {
             drive_distance(STRAFE_RIGHT, 10.0, 0.5);
         } else {
-            drive_distance(STRAFE_LEFT, 15.0, 0.5);
+            drive_distance(STRAFE_LEFT, 10.0, 0.5);
         }
         if (sp == StartingPosition.North) {
             if (ac == AllianceColor.Blue) {
@@ -89,7 +89,7 @@ public class AutonomousJewel extends Generic_Drive {
             else
                 drive_distance(TURN_RIGHT, 16.0, 0.25);
             stop_all_motors();
-            drive_distance(DRIVE_FORWARD, 12.5, 0.5);
+            drive_distance(DRIVE_FORWARD, 16.5, 0.5);
             stop_all_motors();
         }
 
@@ -100,16 +100,19 @@ public class AutonomousJewel extends Generic_Drive {
             drive_distance(STRAFE_RIGHT, CRYPTOBOX_COLUMN_WIDTH, 0.25);
         }
 
-        // Drive to park in front of blue Cryptobox.
+        if (sp == StartingPosition.South) {
+            drive_distance(DRIVE_FORWARD, 4.0, .5);
+        }
         drive_distance(DRIVE_FORWARD, 5.5, .5);
         stop_all_motors();
+
 
         // Place glyph
         openGrabber();
         waitForClaw();
         positionGrabberLift(0.0);
         waitForGrabberLift();
-        drive_distance(TURN_RIGHT, 4.0, 0.5);
+        drive_distance(TURN_RIGHT, 2.0, 0.5);
         drive_distance(DRIVE_FORWARD, 5.0, 0.5);
         drive_distance(TURN_LEFT, 4.0, 0.5);
         drive_distance(DRIVE_BACKWARD, 4.5, 0.5);
