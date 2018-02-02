@@ -10,9 +10,11 @@ public class AutonomousJewel extends Generic_Drive {
     public void robotRun() {
         final AllianceColor ac = check_alliance();
         StartingPosition sp = getStartingPosition(ac);
+
+        info("Checking Vuforia VuMark...");
         RelicRecoveryVuMark vuMark = checkVuMarkVisible(5.0);
 
-        // Close grabber on glyph then raise it.
+        info("Picking up the glyph...");
         raiseLeftJewel();
         raiseRightJewel();
         closeGrabber();
@@ -23,11 +25,13 @@ public class AutonomousJewel extends Generic_Drive {
         int bumpDirection;
         int returnDirection;
 
+        // Set the directions to turn to bump the jewel and return to straight.
         if (ac == AllianceColor.Blue) {
+            info("Checking the left side jewel color...");
             lowerLeftJewel();
             waitForJewelArm();
             AllianceColor jewelColor = checkJewelColor(JewelColorLeft);
-            info("jewel is " + jewelColor + " alliance is " + ac);
+            info("Jewel is " + jewelColor + " Alliance is " + ac);
             if (jewelColor == ac) {
                 bumpDirection = TURN_LEFT;
                 returnDirection = TURN_RIGHT;
@@ -36,10 +40,11 @@ public class AutonomousJewel extends Generic_Drive {
                 returnDirection = TURN_LEFT;
             }
         } else {
+            info("Checking the right side jewel color...");
             lowerRightJewel();
             waitForJewelArm();
             AllianceColor jewelColor = checkJewelColor(JewelColorRight);
-            info("jewel is " + jewelColor + " alliance is " + ac);
+            info("Jewel is " + jewelColor + " Alliance is " + ac);
             if (jewelColor != ac) {
                 bumpDirection = TURN_LEFT;
                 returnDirection = TURN_RIGHT;
@@ -49,9 +54,11 @@ public class AutonomousJewel extends Generic_Drive {
             }
         }
 
+        info("Bumping off the jewel!");
         drive_distance(bumpDirection, 3.0, 0.2);
         stop_all_motors();
 
+        info("Raising the jewel arm...");
         if (ac == AllianceColor.Blue) {
             raiseLeftJewel();
         } else {
@@ -59,10 +66,14 @@ public class AutonomousJewel extends Generic_Drive {
         }
         waitForJewelArm();
 
+        info("Returning to hopefully straight!");
         drive_distance(returnDirection, 3.0, 0.2);
         stop_all_motors();
 
-        drive_distance(DRIVE_FORWARD, 20.0, 0.5);
+        info("Driving off the Balancing Stone");
+        drive_distance(DRIVE_FORWARD, 5.0, 0.25);
+        drive_distance(DRIVE_FORWARD, 10.0, 0.5);
+        drive_distance(DRIVE_FORWARD, 5.0, 0.25);
         stop_all_motors();
 
         if (ac == AllianceColor.Blue) {
@@ -70,51 +81,61 @@ public class AutonomousJewel extends Generic_Drive {
         } else {
             drive_distance(STRAFE_LEFT, 10.0, 0.5);
         }
+
         if (sp == StartingPosition.North) {
             if (ac == AllianceColor.Blue) {
                 drive_distance(STRAFE_RIGHT, 2.5, 0.5);
             } else {
-                drive_distance(STRAFE_LEFT, 2.5, 0.5);
+                drive_distance(STRAFE_LEFT, 6.0, 0.5);
             }
         }
         stop_all_motors();
 
-        // Move to the Cryptobox.
         if (sp == StartingPosition.South) {
-            // Drive to park in front of blue Cryptobox.
+            info("Positioning at the Cryptobox from the South Balancing Stone...");
+
+            info("Driving forward to center of the Cryptobox");
             drive_distance(DRIVE_FORWARD, 10.0, 0.5);
             stop_all_motors();
+
+            info("Turning to face the Cryptobox");
             if (ac == AllianceColor.Blue)
                 drive_distance(TURN_LEFT, 16.0, 0.25);
             else
                 drive_distance(TURN_RIGHT, 16.0, 0.25);
             stop_all_motors();
+            info("Driving forward to the Cryptobox");
             drive_distance(DRIVE_FORWARD, 16.5, 0.5);
             stop_all_motors();
         }
 
+        info("Aligning with the Cryptobox key column");
         if (vuMark == RelicRecoveryVuMark.LEFT) {
+            info("Aligning with the Cryptobox key column");
             drive_distance(STRAFE_LEFT, CRYPTOBOX_COLUMN_WIDTH, 0.25);
             stop_all_motors();
         } else if (vuMark == RelicRecoveryVuMark.RIGHT) {
+            info("Aligning with the Cryptobox key column");
             drive_distance(STRAFE_RIGHT, CRYPTOBOX_COLUMN_WIDTH, 0.25);
+            stop_all_motors();
         }
-
-        if (sp == StartingPosition.South) {
-            drive_distance(DRIVE_FORWARD, 4.0, .5);
-        }
+        info("Driving close to the Cryptobox");
         drive_distance(DRIVE_FORWARD, 5.5, .5);
         stop_all_motors();
 
 
-        // Place glyph
+        info("Dropping the Glyph off...");
         openGrabber();
         waitForClaw();
         positionGrabberLift(0.0);
         waitForGrabberLift();
+
+        info("Pushing the Glyph into the Cryptobox");
         drive_distance(TURN_RIGHT, 2.0, 0.5);
         drive_distance(DRIVE_FORWARD, 5.0, 0.5);
         drive_distance(TURN_LEFT, 4.0, 0.5);
+
+        info("Backing up from the Glyph");
         drive_distance(DRIVE_BACKWARD, 4.5, 0.5);
         stop_all_motors();
     }
