@@ -155,12 +155,12 @@ public class Generic_Drive extends LinearOpMode {
     // or increase the values to speed them up.
     final private static double DRIVE_DIRECTIONS[][] = {
             // mFL,  mFR,   mBL,   mBR
-            { +0.9, +1.00, +0.9, +1.00 }, // DRIVE_FORWARD
+            { +1.00, +1.00, +1.00, +1.00 }, // DRIVE_FORWARD
             { -1.00, -1.00, -1.00, -1.00 }, // DRIVE_BACKWARD
-            { -1.00, +1.00, -1.00, +1.00 }, // TURN_LEFT
-            { +1.00, -1.00, +1.00, -1.00 }, // TURN_RIGHT
-            { -0.97, +0.97, +1.00, -1.00 }, // STRAFE_LEFT
-            { +1.00, -0.92, -0.92, +1.04 }, // STRAFE_RIGHT
+            { -1.15, +1.15, -1.15, +1.15 }, // TURN_LEFT
+            { +0.95, -0.95, +0.95, -0.95 }, // TURN_RIGHT
+            { -1.00, +1.00, +1.00, -1.00 }, // STRAFE_LEFT
+            { +0.95, -1.00, -0.95, +1.00 }, // STRAFE_RIGHT
     };
 
     // An array of DcMotors to represent all of the motors.
@@ -246,7 +246,12 @@ public class Generic_Drive extends LinearOpMode {
 
     // Stop all motors immediately.
     public void stop_all_motors() {
-        set_mode_all_motors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        for (int i = 0; i < MOTOR_COUNT; i++) {
+            motor[i].setPower(0.0);
+        }
+        // Wait for robot to stop
+        ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        while (should_keep_running() && elapsedTime.time() < 250);
     }
 
     public void allow_control_all_motors() {
@@ -293,17 +298,17 @@ public class Generic_Drive extends LinearOpMode {
     }
 
     // Check if at least one encoder has reached its desired position.
-    public boolean one_encoder_satisfied() {
+    public Integer one_encoder_satisfied() {
         for(int i=0; i < MOTOR_COUNT; i++) {
             // We're advancing forwards.
             if(motor[i].getPower() > 0.0 && motor[i].getCurrentPosition() >= motor[i].getTargetPosition())
-                return true;
+                return i;
 
             // We're advancing backwards.
             if(motor[i].getPower() < 0.0 && motor[i].getCurrentPosition() <= motor[i].getTargetPosition())
-                return true;
+                return i;
         }
-        return false;
+        return null;
     }
 
     // Check if at least one encoder has reached its desired position.
@@ -327,8 +332,11 @@ public class Generic_Drive extends LinearOpMode {
     // Wait for at least one encoder to have reached its desired position.
     public void wait_for_one_encoder_satisfied() {
         while(should_keep_running()) {
-            if (one_encoder_satisfied())
+            Integer which_encoder = one_encoder_satisfied();
+            if (which_encoder != null) {
+                info("Motor satisfied " + which_encoder + " Current " + motor[which_encoder].getCurrentPosition() + " Target " + motor[which_encoder].getTargetPosition());
                 return;
+            }
         }
     }
 
@@ -382,14 +390,17 @@ public class Generic_Drive extends LinearOpMode {
     // Start driving in a given direction at a given speed for a maximum of the given distance,
     // but return immediately rather than waiting to reach the position.
     public void drive_distance_start(int direction, double distance, double speed) {
+        info(String.format(Locale.US, "Called drive_distance_start: direction=%d, speed=%.2f",
+                direction, speed));
         double slippage = 1.0;
         if(direction == STRAFE_LEFT || direction == STRAFE_RIGHT)
             slippage = STRAFE_SLIPPAGE_FACTOR;
         for(int i=0; i < MOTOR_COUNT; i++) {
-            int new_position = motor[i].getCurrentPosition();
-            new_position += DRIVE_DIRECTIONS[direction][i] * distance_to_count(distance, slippage);
+            int cur_position = motor[i].getCurrentPosition();
+            int new_position = cur_position + (int)(DRIVE_DIRECTIONS[direction][i] * distance_to_count(distance, slippage));
             // In constant-speed RUN_USING_ENCODER mode, the setTargetPosition is advisory
             // only and we'll check it ourselves against getCurrentPosition.
+            info("Motor " + i + " Current " + cur_position + " New " + new_position);
             motor[i].setTargetPosition(new_position);
         }
         drive_constant_speed(direction, speed);
