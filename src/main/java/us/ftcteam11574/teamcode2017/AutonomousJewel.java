@@ -11,15 +11,19 @@ public class AutonomousJewel extends Generic_Drive {
         final AllianceColor ac = check_alliance();
         StartingPosition sp = getStartingPosition(ac);
 
-        info("Checking Vuforia VuMark...");
-        RelicRecoveryVuMark vuMark = checkVuMarkVisible(5.0);
-
-        info("Picking up the glyph...");
+        info("Grabbing the glyph...");
         raiseLeftJewel();
         raiseRightJewel();
         closeGrabber();
         waitForClaw();
+
+        // Tell the grabber to lift.
         positionGrabberLift(3.0);
+
+        info("Checking Vuforia VuMark...");
+        RelicRecoveryVuMark vuMark = checkVuMarkVisible(5.0);
+
+        info("Waiting for grabber to lift...");
         waitForGrabberLift();
 
         int bumpDirection;
@@ -72,7 +76,7 @@ public class AutonomousJewel extends Generic_Drive {
 
         info("Driving off the Balancing Stone");
         drive_distance(DRIVE_FORWARD, 5.0, 0.25);
-        drive_distance(DRIVE_FORWARD, 10.0, 0.5);
+        drive_distance(DRIVE_FORWARD, 12.0, 0.5);
         drive_distance(DRIVE_FORWARD, 5.0, 0.25);
         stop_all_motors();
 
@@ -84,7 +88,7 @@ public class AutonomousJewel extends Generic_Drive {
 
         if (sp == StartingPosition.North) {
             if (ac == AllianceColor.Blue) {
-                drive_distance(STRAFE_RIGHT, 2.5, 0.5);
+                drive_distance(STRAFE_RIGHT, 4.0, 0.5);
             } else {
                 drive_distance(STRAFE_LEFT, 6.0, 0.5);
             }
@@ -95,7 +99,7 @@ public class AutonomousJewel extends Generic_Drive {
             info("Positioning at the Cryptobox from the South Balancing Stone...");
 
             info("Driving forward to center of the Cryptobox");
-            drive_distance(DRIVE_FORWARD, 10.0, 0.5);
+            drive_distance(DRIVE_FORWARD, 8.0, 0.5);
             stop_all_motors();
 
             info("Turning to face the Cryptobox");
@@ -105,7 +109,7 @@ public class AutonomousJewel extends Generic_Drive {
                 drive_distance(TURN_RIGHT, 16.0, 0.25);
             stop_all_motors();
             info("Driving forward to the Cryptobox");
-            drive_distance(DRIVE_FORWARD, 16.5, 0.5);
+            drive_distance(DRIVE_FORWARD, 8.5, 0.5);
             stop_all_motors();
         }
 

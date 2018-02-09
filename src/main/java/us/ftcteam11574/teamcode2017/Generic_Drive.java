@@ -90,7 +90,7 @@ public class Generic_Drive extends LinearOpMode {
     public static final double JEWEL_LEFT_ARM_UP = 0.0;
     public static final double JEWEL_RIGHT_ARM_UP = 0.05;
 
-    public static final double JEWEL_LEFT_ARM_DOWN = 0.7;
+    public static final double JEWEL_LEFT_ARM_DOWN = 0.65;
     public static final double JEWEL_RIGHT_ARM_DOWN = 0.7;
 
     public static final int CLAW_MOVEMENT_TIME = 200;
