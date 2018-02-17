@@ -84,8 +84,8 @@ public class Generic_Drive extends LinearOpMode {
     public static final double CLAW_LEFT_OPEN_PARTIALLY = 0.5;
     public static final double CLAW_RIGHT_OPEN_PARTIALLY = 0.5;
 
-    public static final double CLAW_LEFT_CLOSED_POSITION = 0.7;
-    public static final double CLAW_RIGHT_CLOSED_POSITION = 0.7;
+    public static final double CLAW_LEFT_CLOSED_POSITION = 0.8;
+    public static final double CLAW_RIGHT_CLOSED_POSITION = 0.8;
 
     public static final double JEWEL_LEFT_ARM_UP = 0.0;
     public static final double JEWEL_RIGHT_ARM_UP = 0.05;
