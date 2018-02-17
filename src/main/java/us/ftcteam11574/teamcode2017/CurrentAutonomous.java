@@ -5,7 +5,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
 @Autonomous(name="Autonomous Jewel and Park and Glyph", group="Autonomous")
 @SuppressWarnings("unused")
-public class AutonomousJewel extends Generic_Drive {
+public class CurrentAutonomous extends Generic_Drive {
     @Override
     public void robotRun() {
         final AllianceColor ac = check_alliance();
