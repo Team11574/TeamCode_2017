@@ -3,7 +3,7 @@ package us.ftcteam11574.teamcode2017;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 
-@Autonomous(name="Autonomous Jewel and Park and Glyph", group="Autonomous")
+@Autonomous(name="Autonomous Jewel and Glyphs and Park", group="Autonomous")
 @SuppressWarnings("unused")
 public class CurrentAutonomous extends Generic_Drive {
     @Override
@@ -21,7 +21,8 @@ public class CurrentAutonomous extends Generic_Drive {
         positionGrabberLift(3.0);
 
         info("Checking Vuforia VuMark...");
-        RelicRecoveryVuMark vuMark = checkVuMarkVisible(5.0);
+        //It usually takes 3 seconds to read VuMark, 3.5 should be sufficient
+        RelicRecoveryVuMark vuMark = checkVuMarkVisible(3.5);
 
         info("Waiting for grabber to lift...");
         waitForGrabberLift();
@@ -108,6 +109,7 @@ public class CurrentAutonomous extends Generic_Drive {
             else
                 drive_distance(TURN_RIGHT, 16.0, 0.25);
             stop_all_motors();
+
             info("Driving forward to the Cryptobox");
             drive_distance(DRIVE_FORWARD, 8.5, 0.5);
             stop_all_motors();
@@ -142,5 +144,23 @@ public class CurrentAutonomous extends Generic_Drive {
         info("Backing up from the Glyph");
         drive_distance(DRIVE_BACKWARD, 4.5, 0.5);
         stop_all_motors();
+
+        if (sp == StartingPosition.North && ac == AllianceColor.Blue) {
+            drive_distance(DRIVE_BACKWARD, 3.0, 0.5);
+            drive_distance(STRAFE_RIGHT, 12.0, 0.5);
+            drive_distance(TURN_RIGHT, 35.0, 0.5);
+            OpenClawPartially();
+            drive_distance(DRIVE_FORWARD, 67.0, 0.75);
+            closeGrabber();
+            positionGrabberLift(7.0);
+            drive_distance(DRIVE_BACKWARD, 3, 0.5);
+            drive_distance(TURN_LEFT, 40.0, 0.5);
+            drive_distance(DRIVE_FORWARD, 64.0, 0.5);
+            openGrabber();
+            positionGrabberLift(0.0);
+            drive_distance(DRIVE_FORWARD, 2.0, 0.5);
+            drive_distance(DRIVE_BACKWARD, 2.0, 0.5);
+            stop_all_motors();
+        }
     }
 }
