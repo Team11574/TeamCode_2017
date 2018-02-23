@@ -2,13 +2,14 @@ package us.ftcteam11574.teamcode2017;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
-//import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -188,7 +189,7 @@ public class Generic_Drive extends LinearOpMode {
     DigitalChannel Left_Right;
 
     // The gyro sensor.
-    //GyroSensor gyro;
+    ModernRoboticsI2cGyro gyro;
 
     //The left color sensor on the jewel arm.
     ColorSensor JewelColorLeft;
@@ -348,6 +349,19 @@ public class Generic_Drive extends LinearOpMode {
         }
     }
 
+    // Wait for Gyro satisfied
+    public void wait_for_gyro_satisfied(int heading, int direction) {
+        info("Waiting for gyro...");
+        while (should_keep_running() && one_encoder_satisfied() == null) {
+            int currentHeading = gyro.getIntegratedZValue();
+            info("Current heading: " + currentHeading + " Target heading: " + heading);
+            if (direction == TURN_RIGHT && currentHeading >= heading)
+                return;
+            else if (direction == TURN_LEFT && currentHeading <= heading)
+                return;
+        }
+    }
+
     // Drive in a given direction at a given speed until at least one encoder reaches the
     // given count.
     public void drive_to_position(int direction, int count, double speed) {
@@ -410,6 +424,11 @@ public class Generic_Drive extends LinearOpMode {
     public void drive_distance(int direction, double distance, double speed) {
         drive_distance_start(direction, distance, speed);
         wait_for_one_encoder_satisfied();
+    }
+
+    public void turn_to_heading(int heading, int direction, double speed) {
+        drive_distance_start(direction, 50.0, speed);
+        wait_for_gyro_satisfied(heading, direction);
     }
 
     public void openGrabber() {
@@ -547,8 +566,6 @@ public class Generic_Drive extends LinearOpMode {
 
     public RelicRecoveryVuMark checkVuMarkVisible(double timeout) {
         ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
-        info("Initializing Vuforia..." );
-        vuforiaInit();
         RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.UNKNOWN;
         info("Checking for Vuforia VuMark...");
         while (elapsedTime.time() < timeout && vuMark == RelicRecoveryVuMark.UNKNOWN) {
@@ -610,17 +627,17 @@ public class Generic_Drive extends LinearOpMode {
         JewelColorRight = hardwareMap.colorSensor.get("jewel_color_right");
         JewelColorRight.setI2cAddress(I2cAddr.create8bit(0x3c));
 
+        info("Initializing Vuforia..." );
+        vuforiaInit();
 
 
         // Initialize the gyro.
-        /*
         info("* Initializing gyro sensor...");
-        gyro = hardwareMap.gyroSensor.get("gyro");
+        gyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
         telemetry.addData(">", "Calibrating gyro...");
         gyro.calibrate();
         while(gyro.isCalibrating() && !isStopRequested()){}
         info("Initialization complete.");
-        */
     }
 
 
