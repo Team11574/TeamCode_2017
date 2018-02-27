@@ -352,9 +352,15 @@ public class Generic_Drive extends LinearOpMode {
     // Wait for Gyro satisfied
     public void wait_for_gyro_satisfied(int heading, int direction) {
         info("Waiting for gyro...");
+        int lastHeading = Integer.MAX_VALUE;
         while (should_keep_running() && one_encoder_satisfied() == null) {
             int currentHeading = gyro.getIntegratedZValue();
-            info("Current heading: " + currentHeading + " Target heading: " + heading);
+
+            if (currentHeading != lastHeading) {
+                info("Current heading: " + currentHeading + " Target heading: " + heading);
+                lastHeading = currentHeading;
+            }
+
             if (direction == TURN_RIGHT && currentHeading >= heading)
                 return;
             else if (direction == TURN_LEFT && currentHeading <= heading)

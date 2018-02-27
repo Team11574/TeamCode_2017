@@ -118,7 +118,7 @@ public class CurrentAutonomous extends Generic_Drive {
         info("Aligning with the Cryptobox key column");
         if (vuMark == RelicRecoveryVuMark.LEFT) {
             info("Aligning with the Cryptobox key column");
-            drive_distance(STRAFE_LEFT, CRYPTOBOX_COLUMN_WIDTH, 0.25);
+            drive_distance(STRAFE_LEFT, 9.0, 0.25);
             stop_all_motors();
         } else if (vuMark == RelicRecoveryVuMark.RIGHT) {
             info("Aligning with the Cryptobox key column");
@@ -144,20 +144,51 @@ public class CurrentAutonomous extends Generic_Drive {
         info("Backing up from the Glyph");
         drive_distance(DRIVE_BACKWARD, 4.5, 0.5);
         stop_all_motors();
+        info("Returning to center column...");
+        if (vuMark == RelicRecoveryVuMark.LEFT) {
+            drive_distance(STRAFE_RIGHT, CRYPTOBOX_COLUMN_WIDTH, 0.25);
+            stop_all_motors();
+        } else if (vuMark == RelicRecoveryVuMark.RIGHT) {
+            drive_distance(STRAFE_LEFT, CRYPTOBOX_COLUMN_WIDTH, 0.25);
+            stop_all_motors();
+        }
 
-        if (sp == StartingPosition.North && ac == AllianceColor.Blue) {
+        if (sp == StartingPosition.North) {
             drive_distance(DRIVE_BACKWARD, 3.0, 0.5);
-            drive_distance(STRAFE_RIGHT, 12.0, 0.5);
-            drive_distance(TURN_RIGHT, 35.0, 0.5);
+            stop_all_motors();
+            if (ac == AllianceColor.Blue) {
+                drive_distance(STRAFE_RIGHT, 12.0, 0.75);
+                //drive_distance(TURN_RIGHT, 38.0, 0.75);
+                turn_to_heading(135, TURN_RIGHT, 0.5);
+            }
+            else {
+                drive_distance(STRAFE_LEFT, 12.0, 0.75);
+                //drive_distance(TURN_LEFT, 39.0, 0.75);
+                turn_to_heading(-135, TURN_LEFT, 0.5);
+            }
             OpenClawPartially();
-            drive_distance(DRIVE_FORWARD, 67.0, 0.75);
+            drive_distance(DRIVE_FORWARD, 36.0, 1.0);
             closeGrabber();
+            waitForClaw();
             positionGrabberLift(7.0);
-            drive_distance(DRIVE_BACKWARD, 3, 0.5);
-            drive_distance(TURN_LEFT, 40.0, 0.5);
-            drive_distance(DRIVE_FORWARD, 64.0, 0.5);
+            drive_distance(DRIVE_BACKWARD, 3.0, 0.5);
+            stop_all_motors();
+
+            if (ac == AllianceColor.Blue) {
+                //drive_distance(TURN_LEFT, 39.0, 0.5);
+                turn_to_heading(0, TURN_LEFT, 0.75);
+            }
+            else {
+                //drive_distance(TURN_RIGHT, 39.0, 0.75);
+                turn_to_heading(0, TURN_RIGHT, 0.75);
+            }
+            stop_all_motors();
+            drive_distance(DRIVE_FORWARD, 33.0, 1.0);
+            drive_distance(STRAFE_LEFT, 14.0, 0.75);
+            stop_all_motors();
             openGrabber();
             positionGrabberLift(0.0);
+            waitForGrabberLift();
             drive_distance(DRIVE_FORWARD, 2.0, 0.5);
             drive_distance(DRIVE_BACKWARD, 2.0, 0.5);
             stop_all_motors();
