@@ -1,35 +1,65 @@
 package us.ftcteam11574.teamcode2017;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DigitalChannelController;
+import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
-//import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 import java.util.Locale;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class Generic_Drive extends LinearOpMode {
     // Tag to log messages to the Android log with.
-    final public static String LOG_TAG = "FTC";
+    final public static String LOG_TAG = "FTC11574";
 
     public void info(String msg) {
         Log.i(LOG_TAG, msg);
     }
-    
 
-// An exception to throw to indicate that "Stop" was pressed (or fired
-// automatically due to timer expiration). The robot should stop
-// immediately to avoid penalty points or crashing.
-public class StopImmediatelyException extends RuntimeException {
-    public StopImmediatelyException() { super(); }
-}
+    enum StartingPosition {
+        Unknown,
+        North,
+        South,
+    }
 
+    @NonNull
+    public StartingPosition getStartingPosition(AllianceColor ac) {
+        final LeftRight lr = check_LeftRight();
+        StartingPosition sp;
+
+        if (ac == AllianceColor.Blue && lr == LeftRight.Right)
+            sp = StartingPosition.South;
+        else if (ac == AllianceColor.Blue && lr == LeftRight.Left)
+            sp = StartingPosition.North;
+        else if (ac == AllianceColor.Red && lr == LeftRight.Right)
+            sp = StartingPosition.North;
+        else if (ac == AllianceColor.Red && lr == LeftRight.Left)
+            sp = StartingPosition.South;
+        else
+            sp = StartingPosition.Unknown;
+        return sp;
+    }
+
+    // An exception to throw to indicate that "Stop" was pressed (or fired
+    // automatically due to timer expiration). The robot should stop
+    // immediately to avoid penalty points or crashing.
+    public class StopImmediatelyException extends RuntimeException {
+        public StopImmediatelyException() { super(); }
+    }
 
     // Number of encoder counts per wheel revolution.
     final private static int ENCODER_CPR = 1120;
@@ -49,46 +79,70 @@ public class StopImmediatelyException extends RuntimeException {
     // The factor of slippage of wheels when strafing. Measured to be about 8%.
     final private static double STRAFE_SLIPPAGE_FACTOR = 1.08;
 
-    // Set Glyph claw closed position
-    public static final double CLAW_CLOSED_POSITION = 1.0;
+    public static final double CLAW_LEFT_OPEN_POSITION = 0.09;
+    public static final double CLAW_RIGHT_OPEN_POSITION = 0.09;
 
-    // Set Glyph claw open position
-    public static final double CLAW_OPEN_POSITION = 0.0;
+    public static final double CLAW_LEFT_OPEN_PARTIALLY = 0.5;
+    public static final double CLAW_RIGHT_OPEN_PARTIALLY = 0.5;
+
+    public static final double CLAW_LEFT_CLOSED_POSITION = 0.8;
+    public static final double CLAW_RIGHT_CLOSED_POSITION = 0.8;
+
+    public static final double JEWEL_LEFT_ARM_UP = 0.0;
+    public static final double JEWEL_RIGHT_ARM_UP = 0.05;
+
+    public static final double JEWEL_LEFT_ARM_DOWN = 0.65;
+    public static final double JEWEL_RIGHT_ARM_DOWN = 0.7;
+
+    public static final int CLAW_MOVEMENT_TIME = 200;
+
+    public static final int JEWEL_ARM_MOVEMENT_TIME = 500;
+
+    public static final double LIFT_PINION_PITCH = 28.0;
+
+    public static final double LIFT_RACK_PITCH = 10.0;
+
+    public static final double LIFT_ENCODER_CPI = (LIFT_RACK_PITCH / LIFT_PINION_PITCH) * ENCODER_CPR;
+
+    private static final int JEWEL_COLOR_SAMPLES = 10;
+
+    public static final double CRYPTOBOX_COLUMN_WIDTH = 7.63;
 
 
     // Each of the colors we need to know about, only red and blue.
     public enum AllianceColor {
-    Unknown,
-    Red,
-    Blue,
-}
+        Unknown,
+        Red,
+        Blue,
+    }
+
     // Each of the sides we need to know about
     public enum LeftRight {
         Unknown,
         Left,
         Right,
- }
+    }
+
     // Each of the motors on the robot.
-    final private static int MOTOR_COUNT = 4;
-    final private static int mFL = 0;
-    final private static int mFR = 1;
-    final private static int mBL = 2;
-    final private static int mBR = 3;
-    final private static String[] MOTOR_NAMES = {
+    final public static int MOTOR_COUNT = 4;
+    final public static int mFL = 0;
+    final public static int mFR = 1;
+    final public static int mBL = 2;
+    final public static int mBR = 3;
+    final public static String[] MOTOR_NAMES = {
             "mFL", "mFR", "mBL", "mBR"
     };
-
 
     // The direction that each motor on the robot is oriented. The right-side motors are mounted
     // backwards relative to the left side ones.
     final private static DcMotorSimple.Direction MOTOR_DIRECTIONS[] = {
-            DcMotor.Direction.REVERSE, // mFL
-            DcMotor.Direction.FORWARD, // mFR
-            DcMotor.Direction.REVERSE, // mBL
-            DcMotor.Direction.FORWARD, // mBR
+            DcMotor.Direction.FORWARD, // mFL
+            DcMotor.Direction.REVERSE, // mFR
+            DcMotor.Direction.FORWARD, // mBL
+            DcMotor.Direction.REVERSE, // mBR
     };
-    // Each driving direction supported by driving functions.
 
+    // Each driving direction supported by driving functions.
     final public static int DRIVE_FORWARD  = 0;
     final public static int DRIVE_BACKWARD = 1;
     final public static int TURN_LEFT      = 2;
@@ -104,22 +158,47 @@ public class StopImmediatelyException extends RuntimeException {
             // mFL,  mFR,   mBL,   mBR
             { +1.00, +1.00, +1.00, +1.00 }, // DRIVE_FORWARD
             { -1.00, -1.00, -1.00, -1.00 }, // DRIVE_BACKWARD
-            { -1.00, +1.00, -1.00, +1.00 }, // TURN_LEFT
-            { +1.00, -1.00, +1.00, -1.00 }, // TURN_RIGHT
-            { -0.97, +0.97, +1.00, -1.00 }, // STRAFE_LEFT
-            { +1.00, -0.92, -0.92, +1.04 }, // STRAFE_RIGHT
+            { -1.15, +1.15, -1.15, +1.15 }, // TURN_LEFT
+            { +0.95, -0.95, +0.95, -0.95 }, // TURN_RIGHT
+            { -1.00, +1.00, +1.00, -1.00 }, // STRAFE_LEFT
+            { +0.95, -1.00, -0.95, +1.00 }, // STRAFE_RIGHT
     };
+
     // An array of DcMotors to represent all of the motors.
     DcMotor motor[];
 
-  // The chassis-mounted red/blue alliance switch for autonomous mode.
+    //
+    DcMotor motorGrabberLift;
+
+    // A variable for the left servo
+    Servo servoGrabberLeft;
+
+    // a variable for the right servo
+    Servo servoGrabberRight;
+
+    // a variable for the left jewel servo
+    Servo servoJewelLeft;
+
+    // a variable for the right jewel servo
+    Servo servoJewelRight;
+
+    // The chassis-mounted red/blue alliance switch for autonomous mode.
     DigitalChannel alliance_switch;
 
     //The LeftRight switch
     DigitalChannel Left_Right;
 
     // The gyro sensor.
-  //  GyroSensor gyro;
+    ModernRoboticsI2cGyro gyro;
+
+    //The left color sensor on the jewel arm.
+    ColorSensor JewelColorLeft;
+
+    //The right color sensor on the jewel arm.
+    ColorSensor JewelColorRight;
+
+    private VuforiaTrackable mRelicRecoveryVuMarks;
+
 
     // Convert a distance, in inches, into an encoder count, including a wheel slippage correction
     // factor.
@@ -158,13 +237,26 @@ public class StopImmediatelyException extends RuntimeException {
         return true;
     }
 
-    // Stop all motors immediately.
-    public void stop_all_motors() {
+    public void set_mode_all_motors(DcMotor.RunMode mode) {
         for(int i=0; i < MOTOR_COUNT; i++) {
-            if(motor[i].getMode() != DcMotor.RunMode.STOP_AND_RESET_ENCODER) {
-                motor[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            if(motor[i].getMode() != mode) {
+                motor[i].setMode(mode);
             }
         }
+    }
+
+    // Stop all motors immediately.
+    public void stop_all_motors() {
+        for (int i = 0; i < MOTOR_COUNT; i++) {
+            motor[i].setPower(0.0);
+        }
+        // Wait for robot to stop
+        ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        while (should_keep_running() && elapsedTime.time() < 250);
+    }
+
+    public void allow_control_all_motors() {
+        set_mode_all_motors(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     // Set the power of a given motor.
@@ -207,17 +299,17 @@ public class StopImmediatelyException extends RuntimeException {
     }
 
     // Check if at least one encoder has reached its desired position.
-    public boolean one_encoder_satisfied() {
+    public Integer one_encoder_satisfied() {
         for(int i=0; i < MOTOR_COUNT; i++) {
             // We're advancing forwards.
             if(motor[i].getPower() > 0.0 && motor[i].getCurrentPosition() >= motor[i].getTargetPosition())
-                return true;
+                return i;
 
             // We're advancing backwards.
             if(motor[i].getPower() < 0.0 && motor[i].getCurrentPosition() <= motor[i].getTargetPosition())
-                return true;
+                return i;
         }
-        return false;
+        return null;
     }
 
     // Check if at least one encoder has reached its desired position.
@@ -241,8 +333,11 @@ public class StopImmediatelyException extends RuntimeException {
     // Wait for at least one encoder to have reached its desired position.
     public void wait_for_one_encoder_satisfied() {
         while(should_keep_running()) {
-            if (one_encoder_satisfied())
+            Integer which_encoder = one_encoder_satisfied();
+            if (which_encoder != null) {
+                info("Motor satisfied " + which_encoder + " Current " + motor[which_encoder].getCurrentPosition() + " Target " + motor[which_encoder].getTargetPosition());
                 return;
+            }
         }
     }
 
@@ -250,6 +345,25 @@ public class StopImmediatelyException extends RuntimeException {
     public void wait_for_all_encoders_satisfied() {
         while(should_keep_running()) {
             if (all_encoders_satisfied())
+                return;
+        }
+    }
+
+    // Wait for Gyro satisfied
+    public void wait_for_gyro_satisfied(int heading, int direction) {
+        info("Waiting for gyro...");
+        int lastHeading = Integer.MAX_VALUE;
+        while (should_keep_running() && one_encoder_satisfied() == null) {
+            int currentHeading = gyro.getIntegratedZValue();
+
+            if (currentHeading != lastHeading) {
+                info("Current heading: " + currentHeading + " Target heading: " + heading);
+                lastHeading = currentHeading;
+            }
+
+            if (direction == TURN_RIGHT && currentHeading >= heading)
+                return;
+            else if (direction == TURN_LEFT && currentHeading <= heading)
                 return;
         }
     }
@@ -296,14 +410,17 @@ public class StopImmediatelyException extends RuntimeException {
     // Start driving in a given direction at a given speed for a maximum of the given distance,
     // but return immediately rather than waiting to reach the position.
     public void drive_distance_start(int direction, double distance, double speed) {
+        info(String.format(Locale.US, "Called drive_distance_start: direction=%d, speed=%.2f",
+                direction, speed));
         double slippage = 1.0;
         if(direction == STRAFE_LEFT || direction == STRAFE_RIGHT)
             slippage = STRAFE_SLIPPAGE_FACTOR;
         for(int i=0; i < MOTOR_COUNT; i++) {
-            int new_position = motor[i].getCurrentPosition();
-            new_position += DRIVE_DIRECTIONS[direction][i] * distance_to_count(distance, slippage);
+            int cur_position = motor[i].getCurrentPosition();
+            int new_position = cur_position + (int)(DRIVE_DIRECTIONS[direction][i] * distance_to_count(distance, slippage));
             // In constant-speed RUN_USING_ENCODER mode, the setTargetPosition is advisory
             // only and we'll check it ourselves against getCurrentPosition.
+            info("Motor " + i + " Current " + cur_position + " New " + new_position);
             motor[i].setTargetPosition(new_position);
         }
         drive_constant_speed(direction, speed);
@@ -312,9 +429,79 @@ public class StopImmediatelyException extends RuntimeException {
     // Drive in a given direction at a given speed until reaching the given distance.
     public void drive_distance(int direction, double distance, double speed) {
         drive_distance_start(direction, distance, speed);
-        wait_for_all_encoders_satisfied();
+        wait_for_one_encoder_satisfied();
     }
 
+    public void turn_to_heading(int heading, int direction, double speed) {
+        drive_distance_start(direction, 50.0, speed);
+        wait_for_gyro_satisfied(heading, direction);
+    }
+
+    public void openGrabber() {
+        servoGrabberLeft.setPosition(CLAW_LEFT_OPEN_POSITION);
+        servoGrabberRight.setPosition(CLAW_RIGHT_OPEN_POSITION);
+    }
+
+    public void closeGrabber() {
+        servoGrabberLeft.setPosition(CLAW_LEFT_CLOSED_POSITION);
+        servoGrabberRight.setPosition(CLAW_RIGHT_CLOSED_POSITION);
+    }
+
+    public void OpenClawPartially() {
+        servoGrabberLeft.setPosition(CLAW_LEFT_OPEN_PARTIALLY);
+        servoGrabberRight.setPosition(CLAW_RIGHT_OPEN_PARTIALLY);
+    }
+    public void lowerLeftJewel() {
+        servoJewelLeft.setPosition(JEWEL_LEFT_ARM_DOWN);
+    }
+
+    public void raiseLeftJewel() {
+        servoJewelLeft.setPosition(JEWEL_LEFT_ARM_UP);
+    }
+
+    public void lowerRightJewel() {
+        servoJewelRight.setPosition(JEWEL_RIGHT_ARM_DOWN);
+    }
+
+    public void raiseRightJewel() {
+        servoJewelRight.setPosition(JEWEL_RIGHT_ARM_UP);
+    }
+
+    private double previousGrabberLiftHeight = 0.0;
+    private double targetGrabberLiftHeight = 0.0;
+
+    public void positionGrabberLift(double height) {
+        previousGrabberLiftHeight = targetGrabberLiftHeight;
+        targetGrabberLiftHeight = height * LIFT_ENCODER_CPI;
+        motorGrabberLift.setTargetPosition((int)(targetGrabberLiftHeight));
+        motorGrabberLift.setPower(0.5);
+
+    }
+
+    public void waitForGrabberLift() {
+        while (should_keep_running()) {
+            telemetry.addData("Position...", motorGrabberLift.getCurrentPosition());
+            telemetry.addData("Target...", motorGrabberLift.getTargetPosition());
+            telemetry.update();
+            if (previousGrabberLiftHeight < targetGrabberLiftHeight) { // moving up
+                if (motorGrabberLift.getCurrentPosition() >= (motorGrabberLift.getTargetPosition()-40))
+                    return;
+            } else if (previousGrabberLiftHeight > targetGrabberLiftHeight) { //moving down
+                if (motorGrabberLift.getCurrentPosition() <= (motorGrabberLift.getTargetPosition()+40))
+                    return;
+            }
+
+        }
+    }
+    public void waitForJewelArm() {
+        ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        while (should_keep_running() && elapsedTime.time() < JEWEL_ARM_MOVEMENT_TIME);
+    }
+
+    public void waitForClaw() {
+        ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        while (should_keep_running() && elapsedTime.time() < CLAW_MOVEMENT_TIME);
+    }
 
     public Generic_Drive.AllianceColor check_alliance() {
         if (alliance_switch.getState())
@@ -332,6 +519,73 @@ public class StopImmediatelyException extends RuntimeException {
             return LeftRight.Left;
     }
 
+    public AllianceColor checkJewelColor(ColorSensor sensor) {
+        int red = 0;
+        int blue = 0;
+
+        ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        for (int i = 0; i < JEWEL_COLOR_SAMPLES; i++) {
+            red += sensor.red();
+            blue += sensor.blue();
+            while (should_keep_running() && elapsedTime.time() < 10);
+            elapsedTime.reset();
+        }
+        red /= JEWEL_COLOR_SAMPLES;
+        blue /= JEWEL_COLOR_SAMPLES;
+
+        info(String.format(Locale.US, "checkJewelColor: red = %d, blue = %d", red, blue));
+        if (red > blue)
+            return AllianceColor.Red;
+        else if (blue > red)
+            return AllianceColor.Blue;
+        else
+            return AllianceColor.Unknown;
+    }
+
+    public void vuforiaInit() {
+        // Find the Android View for Vuforia to display the camera's view.
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "cameraMonitorViewId", "id",
+                hardwareMap.appContext.getPackageName());
+
+        // Initialize the Vuforia parameters.
+        VuforiaLocalizer.Parameters vuforiaParameters =
+                new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        vuforiaParameters.vuforiaLicenseKey =
+                hardwareMap.appContext.getString(R.string.VuforiaLicenseKey);
+        vuforiaParameters.cameraDirection =
+                VuforiaLocalizer.CameraDirection.BACK;
+        VuforiaLocalizer vuforiaLocalizer =
+                ClassFactory.createVuforiaLocalizer(vuforiaParameters);
+
+        // Load the Relic Recovery VuMarks and activate them.
+        VuforiaTrackables vuforiaTrackables =
+                vuforiaLocalizer.loadTrackablesFromAsset("RelicVuMark");
+        vuforiaTrackables.activate();
+
+        // Save the Relic Recovery VuMarks in an instance variable for access later.
+        mRelicRecoveryVuMarks = vuforiaTrackables.get(0);
+
+    }
+
+    public void vuforiaDeInit() {
+
+    }
+
+    public RelicRecoveryVuMark checkVuMarkVisible(double timeout) {
+        ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.UNKNOWN;
+        info("Checking for Vuforia VuMark...");
+        while (elapsedTime.time() < timeout && vuMark == RelicRecoveryVuMark.UNKNOWN) {
+            vuMark = RelicRecoveryVuMark.from(mRelicRecoveryVuMarks);
+        }
+        info("Found Vuforia VuMark: " + vuMark);
+        vuforiaDeInit();
+        info("DeInitialized Vuforia.");
+
+        return vuMark;
+    }
+
     // Initialize the robot and all its sensors.
     public void robotInit() {
         info("Initialization starting...");
@@ -343,31 +597,55 @@ public class StopImmediatelyException extends RuntimeException {
             motor[i] = hardwareMap.dcMotor.get(MOTOR_NAMES[i]);
             motor[i].setDirection(MOTOR_DIRECTIONS[i]);
             motor[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motor[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             motor[i].setPower(0.0);
         }
+
+        // Initialize motorGrabberLift
+        motorGrabberLift = hardwareMap.dcMotor.get("mLS");
+        motorGrabberLift.setDirection(DcMotor.Direction.FORWARD);
+        motorGrabberLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Initialize grabber servos
+        servoGrabberLeft = hardwareMap.servo.get("SL");
+        servoGrabberRight = hardwareMap.servo.get("SR");
+        servoGrabberLeft.setDirection(Servo.Direction.REVERSE);
+
+        servoJewelRight = hardwareMap.servo.get("SJ1");
+        servoJewelLeft = hardwareMap.servo.get("SJ2");
+        servoJewelRight.setDirection(Servo.Direction.REVERSE);
 
         // Make sure everything starts out stopped.
         stop_all_motors();
 
-
         // Initialize the alliance switch.
         info("* Initializing alliance switch...");
         alliance_switch = hardwareMap.digitalChannel.get("alliance_switch");
-        alliance_switch.setMode(DigitalChannelController.Mode.INPUT);
+        alliance_switch.setMode(DigitalChannel.Mode.INPUT);
 
         // Initialize the left_right switch.
         info("* Initializing Left_Right switch...");
         Left_Right = hardwareMap.digitalChannel.get("left_right_switch");
-        Left_Right.setMode(DigitalChannelController.Mode.INPUT);
+        Left_Right.setMode(DigitalChannel.Mode.INPUT);
+
+        // Initialize the color sensor for the jewel arm.
+        info("* Initializing the jewel color sensors...");
+        JewelColorLeft = hardwareMap.colorSensor.get("jewel_color_left");
+        JewelColorLeft.setI2cAddress(I2cAddr.create8bit(0x3a));
+        JewelColorRight = hardwareMap.colorSensor.get("jewel_color_right");
+        JewelColorRight.setI2cAddress(I2cAddr.create8bit(0x3c));
+
+        info("Initializing Vuforia..." );
+        vuforiaInit();
+
 
         // Initialize the gyro.
-       /* info("* Initializing gyro sensor...");
-        gyro = hardwareMap.gyroSensor.get("gyro");
+        info("* Initializing gyro sensor...");
+        gyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "gyro");
         telemetry.addData(">", "Calibrating gyro...");
         gyro.calibrate();
         while(gyro.isCalibrating() && !isStopRequested()){}
         info("Initialization complete.");
-    */
     }
 
 
@@ -425,6 +703,5 @@ public class StopImmediatelyException extends RuntimeException {
             throw new RuntimeException(t);
         }
     }
-
 }
 
