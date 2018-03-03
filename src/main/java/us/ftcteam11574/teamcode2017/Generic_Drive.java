@@ -320,8 +320,10 @@ public class StopImmediatelyException extends RuntimeException {
         if (alliance_switch.getState())
             return AllianceColor.Blue;
         else
+
             return AllianceColor.Red;
-    }
+
+        +
 
     public Generic_Drive.LeftRight check_LeftRight() {
         if (Left_Right.getState())
