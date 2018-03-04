@@ -6,6 +6,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 @Autonomous(name="Autonomous Jewel and Glyphs and Park", group="Autonomous")
 @SuppressWarnings("unused")
 public class CurrentAutonomous extends Generic_Drive {
+
+    private boolean DoNorthMultiGlyph = false;
+    private boolean DoSouthMultiGlyph = false;
+
     @Override
     public void robotRun() {
         final AllianceColor ac = check_alliance();
@@ -144,16 +148,19 @@ public class CurrentAutonomous extends Generic_Drive {
         info("Backing up from the Glyph");
         drive_distance(DRIVE_BACKWARD, 4.5, 0.5);
         stop_all_motors();
-        info("Returning to center column...");
-        if (vuMark == RelicRecoveryVuMark.LEFT) {
-            drive_distance(STRAFE_RIGHT, CRYPTOBOX_COLUMN_WIDTH, 0.25);
-            stop_all_motors();
-        } else if (vuMark == RelicRecoveryVuMark.RIGHT) {
-            drive_distance(STRAFE_LEFT, CRYPTOBOX_COLUMN_WIDTH, 0.25);
-            stop_all_motors();
+
+        if (DoNorthMultiGlyph || DoSouthMultiGlyph) {
+            info("Returning to center column...");
+            if (vuMark == RelicRecoveryVuMark.LEFT) {
+                drive_distance(STRAFE_RIGHT, CRYPTOBOX_COLUMN_WIDTH, 0.25);
+                stop_all_motors();
+            } else if (vuMark == RelicRecoveryVuMark.RIGHT) {
+                drive_distance(STRAFE_LEFT, CRYPTOBOX_COLUMN_WIDTH, 0.25);
+                stop_all_motors();
+            }
         }
 
-        if (sp == StartingPosition.North) {
+        if (sp == StartingPosition.North && DoNorthMultiGlyph) {
             drive_distance(DRIVE_BACKWARD, 3.0, 0.75);
             stop_all_motors();
             if (ac == AllianceColor.Blue) {
@@ -195,7 +202,7 @@ public class CurrentAutonomous extends Generic_Drive {
             drive_distance(DRIVE_BACKWARD, 5.0, 0.75);
             stop_all_motors();
 
-        } else if (sp == StartingPosition.South) {
+        } else if (sp == StartingPosition.South && DoSouthMultiGlyph) {
             if (ac == AllianceColor.Blue) {
                 drive_distance(DRIVE_BACKWARD, 5.0, 0.50);
                 turn_to_heading(85, TURN_RIGHT, 0.50);
