@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 @SuppressWarnings("unused")
 public class CurrentAutonomous extends Generic_Drive {
 
-    private boolean DoNorthMultiGlyph = false;
+    private boolean DoNorthMultiGlyph = true;
     private boolean DoSouthMultiGlyph = false;
 
     @Override
@@ -198,7 +198,7 @@ public class CurrentAutonomous extends Generic_Drive {
             openGrabber();
             positionGrabberLift(0.0);
             waitForGrabberLift();
-            drive_distance(DRIVE_FORWARD, 7.0, 0.75);
+            drive_distance(DRIVE_FORWARD, 10  .0, 0.75);
             drive_distance(DRIVE_BACKWARD, 5.0, 0.75);
             stop_all_motors();
 
