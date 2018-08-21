@@ -177,28 +177,32 @@ public class CurrentAutonomous extends Generic_Drive {
             } else {
                 turn_to_heading(-115, TURN_RIGHT, 0.75);
             }
-            drive_distance(DRIVE_FORWARD, 9.5, 0.75);
+            drive_distance(DRIVE_FORWARD, 10.0, 0.75);
             stop_all_motors();
             closeGrabber();
             waitForClaw();
-            positionGrabberLift(7.0);
-            drive_distance(DRIVE_BACKWARD, 10.0, 0.75);
+            positionGrabberLift(9.0);
+            drive_distance(DRIVE_BACKWARD, 14.5, 0.75);
             stop_all_motors();
 
             if (ac == AllianceColor.Blue) {
                 turn_to_heading(0, TURN_LEFT, 0.75);
             } else {
-                turn_to_heading(0, TURN_RIGHT, 0.75);
+                turn_to_heading(-20, TURN_RIGHT, 0.75);
             }
             stop_all_motors();
-            drive_distance(DRIVE_FORWARD, 22.0, 1.00);
+            drive_distance(DRIVE_FORWARD, 27.0, 1.00);
             stop_all_motors();
-            drive_distance(STRAFE_LEFT, 19.0, 1.00);
+            if (ac == AllianceColor.Blue) {
+                drive_distance(STRAFE_LEFT, 19.0, 1.0);
+            } else {
+                drive_distance(STRAFE_RIGHT, 14.0, 1.0);
+            }
             stop_all_motors();
-            openGrabber();
             positionGrabberLift(0.0);
             waitForGrabberLift();
-            drive_distance(DRIVE_FORWARD, 10  .0, 0.75);
+            drive_distance(DRIVE_FORWARD, 10.0, 0.75);
+            openGrabber();
             drive_distance(DRIVE_BACKWARD, 5.0, 0.75);
             stop_all_motors();
 
